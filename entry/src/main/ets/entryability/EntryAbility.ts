@@ -17,9 +17,10 @@ export default class EntryAbility extends UIAbility {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
     // 启动子窗口来展示开屏广告
-    const win = await windowStage.createSubWindow("ad_window")
-    await win.showWindow()
-    win.setUIContent("pages/start/Advertisement")
+    // todo 开发的时候,不展示开屏
+    // const win = await windowStage.createSubWindow("ad_window")
+    // await win.showWindow()
+    // win.setUIContent("pages/start/Advertisement")
 
     windowStage.loadContent('pages/Index', (err, data) => {
       if (err.code) {

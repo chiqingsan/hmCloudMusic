@@ -20,6 +20,7 @@ struct Recommend {
           .fillColor('#7a828e')
       }
       .width('100%')
+      .height(40)
       .padding(12)
       .borderRadius('60')
       .backgroundColor('#FF2D2A2A')
@@ -171,9 +172,8 @@ struct Recommend {
           })
         }
         //   等等...(自由发挥)
-      }.width('100%').height('100%')
-
-    }
+      }.layoutWeight(1).padding({bottom:70})
+    }.width("100%").height("100%")
   }
 }
 

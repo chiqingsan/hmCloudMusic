@@ -21,7 +21,9 @@ struct HomeIndex {
 
 
   aboutToAppear(): void {
-
+    // 开始沉浸式状态栏
+    windowManager.enableFullScreen(true)
+    windowManager.settingStatusBar(true)
   }
 
   onPageShow(): void {
