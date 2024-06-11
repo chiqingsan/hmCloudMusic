@@ -7,15 +7,13 @@ import { windowManager } from '../../common/utils/windowManager'
 struct Advertisement {
   @State time: number = 5
   timer: number = -1
+
   aboutToAppear() {
+
     // 必须重置才能改动画的内容
     this.timer = setInterval(() => {
       if (this.time <= 0) {
-        clearInterval(this.timer)
-        router.replaceUrl({
-          url: 'pages/Index'
-        })
-        return
+        this.closeWin()
       }
       this.time -= 1
     }, 1000)
@@ -29,8 +27,11 @@ struct Advertisement {
   aboutToDisappear(): void {
     // 开始沉浸式状态栏
     windowManager.enableFullScreen(true)
+    windowManager.settingStatusBar(true)
     clearInterval(this.timer)
   }
+
+
 
 
   build() {

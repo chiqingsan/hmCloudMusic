@@ -7,6 +7,7 @@ import SongList from './music/SongList'
 import router from '@ohos.router'
 import PlayerNav from '../common/components/playerNav'
 import { tabsData } from '../common/constants'
+import { windowManager } from '../common/utils/windowManager'
 
 @Entry
 @Component
@@ -22,6 +23,12 @@ struct HomeIndex {
   aboutToAppear(): void {
 
   }
+
+  onPageShow(): void {
+    windowManager.enableFullScreen(true)
+    windowManager.settingStatusBar(true)
+  }
+
 
 
 
@@ -96,7 +103,7 @@ struct HomeIndex {
     .width('100%')
     .height('100%')
     .padding({top:this.topHeight})
-    .backgroundColor('#3c3f41')
+    .backgroundColor('#121215')
     .opacity(this.opacityNum)
   }
   // 页面也换效果,避免滑动切换效果
