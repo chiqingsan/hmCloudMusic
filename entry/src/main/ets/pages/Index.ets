@@ -25,8 +25,7 @@ struct HomeIndex {
   }
 
   onPageShow(): void {
-    windowManager.enableFullScreen(true)
-    windowManager.settingStatusBar(true)
+
   }
 
 
@@ -38,14 +37,14 @@ struct HomeIndex {
     Column() {
       Row() {
         Image(item.icon)
-          .fillColor(item.name === this.currentName ? Color.White : $r('app.color.primary_dark'))
+          .fillColor(item.name === this.currentName ? $r('app.color.primary_light') : $r('app.color.primary_dark'))
           .width(item.name === this.currentName ? 18 : 22)
           .aspectRatio(1)
       }
       .width(22)
       .aspectRatio(1)
       .borderRadius(22)
-      .backgroundColor(item.name === this.currentName ? $r('app.color.primary_light') : Color.Transparent)
+      // .backgroundColor(item.name === this.currentName ?  : Color.Transparent)
       .justifyContent(FlexAlign.Center)
 
       Text(item.title)
@@ -83,8 +82,7 @@ struct HomeIndex {
         }
         .scrollable(false)
         .padding({bottom:this.bottomHeight})
-        // .padding({bottom:100})
-        .onChange(index => {
+        .onTabBarClick(index => {
           this.currentName = tabsData[index].name
         })
         // 背景播放
