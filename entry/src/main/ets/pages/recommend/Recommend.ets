@@ -36,7 +36,9 @@ struct Recommend {
         ForEach(swiperList, (item: string) => {
           Row() {
             Image(item)
-              .width('100%')
+              .height(165)
+              .width("100%")
+              .objectFit(ImageFit.Contain)
           }
           .borderRadius(8)
           .clip(true)
@@ -44,6 +46,14 @@ struct Recommend {
       }
       .margin(8)
       .autoPlay(true)
+      .indicator(
+        DotIndicator.dot()
+          .color(Color.White)
+          .selectedColor(Color.Gray)
+          .right(0)
+          .selectedItemWidth(18)
+          .itemWidth(12)
+      )
 
     }
     .width('100%')
