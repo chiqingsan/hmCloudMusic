@@ -15,7 +15,7 @@ struct Recommend {
           .fontColor('#7a828e')
           .layoutWeight(1)
         Image($r('app.media.ic_code'))
-          .width(20)
+          .width(16)
           .aspectRatio(1)
           .fillColor('#7a828e')
       }
@@ -67,11 +67,23 @@ struct Recommend {
       Text(title)
         .fontWeight(FontWeight.Bold)
         .fontColor(Color.White)
-      Text('更多')
+        .fontSize(18)
+      Blank()
+      Text('更多 ')
         .fontColor(Color.Gray)
+      Image($r("sys.media.ohos_ic_public_arrow_right"))
+        .width(16)
+        .aspectRatio(1)
+        .fillColor(Color.Gray)
     }
     .width('100%')
-    .padding(8)
+    .padding({
+      left:15,
+      right:15,
+      top:8,
+      bottom:8,
+    })
+    .margin({bottom:5})
     .justifyContent(FlexAlign.SpaceBetween)
   }
 
@@ -102,6 +114,10 @@ struct Recommend {
                       Image(item.img)
                         .width('100%')
                         .aspectRatio(1)
+                        // .border({
+                        //   width:10,
+                        //   color:"#fff"
+                        // })
                       // Text()
                       //   .width('100%')
                       //   .height(40)
@@ -113,20 +129,21 @@ struct Recommend {
 
                     Text(item.title)
                       .width('100%')
+                      .height(65)
                       .fontSize(12)
                       .padding(12)
                       .fontColor('#FFE9DFDF')
-                      .backgroundColor
-                      (item.bottom)
+                      .backgroundColor(item.bottom)
                   }
                   .width('40%')
-                  .borderRadius(8)
+                  .borderRadius(10)
                   .clip(true)
                 })
               }
             }
             .width('100%')
             .scrollable(ScrollDirection.Horizontal)
+            .scrollBar(BarState.Off)
           }
           .padding({
             left: 8,
@@ -180,9 +197,9 @@ struct Recommend {
             left: 8,
             right: 8
           })
-        }
+        }.margin({top:15})
         //   等等...(自由发挥)
-      }.layoutWeight(1).padding({bottom:70})
+      }.layoutWeight(1).padding({bottom:85})
     }.width("100%").height("100%")
   }
 }
