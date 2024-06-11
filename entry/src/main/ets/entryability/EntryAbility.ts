@@ -16,11 +16,12 @@ export default class EntryAbility extends UIAbility {
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
+    // 启动子窗口来展示开屏广告
     const win = await windowStage.createSubWindow("ad_window")
     await win.showWindow()
-    win.setUIContent("pages/Start/Advertisement")
+    win.setUIContent("pages/start/Advertisement")
 
-    windowStage.loadContent('pages/Advertisement', (err, data) => {
+    windowStage.loadContent('pages/Index', (err, data) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
         return;

@@ -11,10 +11,20 @@ import { tabsData } from '../common/constants'
 @Entry
 @Component
 struct HomeIndex {
+  @StorageProp("topHeight") topHeight:number = 0
+  @StorageProp("bottomHeight") bottomHeight:number = 0
   @State
   currentName: string = 'recommend'
   @State
   opacityNum: number = 1
+
+
+  aboutToAppear(): void {
+
+  }
+
+
+
   // tabBar组件
   @Builder
   getTabBar(item: TabClass) {
@@ -64,14 +74,16 @@ struct HomeIndex {
             .backgroundColor('#121215')
           })
         }
-        .barHeight(60)
+        .scrollable(false)
+        .padding({bottom:this.bottomHeight})
+        // .padding({bottom:100})
         .onChange(index => {
           this.currentName = tabsData[index].name
         })
         // 背景播放
         if(this.currentName!=='mine'){
           PlayerNav()
-            .translate({ y: -60 })
+            .translate({ y: -56-this.bottomHeight })
             .onClick(() => {
               router.pushUrl({
                 url: 'pages/Play'
@@ -83,6 +95,7 @@ struct HomeIndex {
     }
     .width('100%')
     .height('100%')
+    .padding({top:this.topHeight})
     .backgroundColor('#3c3f41')
     .opacity(this.opacityNum)
   }

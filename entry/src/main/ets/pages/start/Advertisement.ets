@@ -50,14 +50,17 @@ struct Advertisement {
         .margin({ right: 20, top: 20 })
         .height(30)
         .fontSize(14)
-        .borderRadius(15)
         .backgroundColor($r("app.color.background_page"))
+        .border({
+          width:1,
+          color:"#444444",
+          radius:15
+        })
+        .fontColor("#1c1c1c")
         .onClick(() => {
           this.closeWin()
         })
-        .offset({
-          y: 30
-        })
+        .offset({ y: 30 })
     }
     .width('100%')
     .height('100%')

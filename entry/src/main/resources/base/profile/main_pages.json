@@ -2,6 +2,6 @@
   "src": [
     "pages/Index",
     "pages/start/Advertisement",
-    "pages/paly/Play"
+    "pages/play/Play"
   ]
 }
