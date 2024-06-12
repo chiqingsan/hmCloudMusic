@@ -190,7 +190,7 @@ struct SongList {
               }
             }
             .layoutWeight(1)
-            .padding({bottom:20})
+            .padding({bottom:15})
           }
           .layoutWeight(1)
         }

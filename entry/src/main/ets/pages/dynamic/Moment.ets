@@ -3,6 +3,7 @@ import { momentListType } from '../../models/index'
 
 @Component
 struct Moment {
+  @StorageProp("topHeight") topHeight:number = 0
   build() {
     Column() {
       Row() {
@@ -122,6 +123,7 @@ struct Moment {
     }
     .width('100%')
     .height('100%')
+    .padding({top:this.topHeight})
   }
 }
 

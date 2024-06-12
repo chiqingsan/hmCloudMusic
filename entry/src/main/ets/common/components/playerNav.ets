@@ -5,8 +5,9 @@ struct PlayerNav {
     Row() {
       Row({space:10}) {
         Image(songs[0].img)
-          .width(40)
+          .width(35)
           .aspectRatio(1)
+          .borderRadius(5)
         Column() {
           Text(songs[0].name)
             .fontColor('#fff')

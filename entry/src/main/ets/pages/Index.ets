@@ -109,16 +109,16 @@ struct HomeIndex {
     .opacity(this.opacityNum)
   }
   // 页面换效果,避免滑动切换效果
-  pageTransition() {
-    PageTransitionEnter({ duration: 200})
-      .onEnter(() => {
-        this.opacityNum = 1
-      })
-    PageTransitionExit({ duration: 200})
-      .onExit(() => {
-        this.opacityNum = 0
-      })
-  }
+  // pageTransition() {
+  //   PageTransitionEnter({ duration: 200})
+  //     .onEnter(() => {
+  //       this.opacityNum = 1
+  //     })
+  //   PageTransitionExit({ duration: 200})
+  //     .onExit(() => {
+  //       this.opacityNum = 0
+  //     })
+  // }
 }
 
 
