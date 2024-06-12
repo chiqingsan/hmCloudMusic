@@ -4,17 +4,14 @@ import { HMAVPlayer } from '../utils/AVPlayerClass'
 
 @Component
 struct PlayerNav {
-  activeIndex: number = 0
   @Link playState: PlayStateType
-
-
 
   async playMusic() {
     // 同步播放状态
     if (this.playState?.isPlay) {
       await HMAVPlayer.pausePlay()
     } else {
-      await HMAVPlayer.singlePlay(songs[this.activeIndex])
+      await HMAVPlayer.singlePlay(songs[this.playState.playIndex])
     }
   }
 
@@ -50,7 +47,6 @@ struct PlayerNav {
           .width(20)
           .aspectRatio(1)
           .fillColor('#4cafc6')
-          .enabled(this.activeIndex >= 0)
           .onClick(() => {
             this.previousOne()
           })
@@ -65,7 +61,6 @@ struct PlayerNav {
           .width(20)
           .aspectRatio(1)
           .fillColor('#4cafc6')
-          .enabled(this.activeIndex < songs.length)
           .onClick(() => {
             this.nextSong()
           })

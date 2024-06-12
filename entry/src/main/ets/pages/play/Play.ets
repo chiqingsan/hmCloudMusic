@@ -15,7 +15,6 @@ struct Play {
   @State isPlay: boolean = false
   @State opacityNum: number = 1
   @State isShow: boolean = false
-  @State activeIndex: number = 0
   @State randomNum: number = 0
   @State randomShakenX: number = 0
   @State randomShakenY: number = 0
@@ -28,6 +27,9 @@ struct Play {
 
   aboutToAppear(): void {
     this.playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
+    // AlertDialog.show({ message: JSON.stringify(this.playState, null, 2) })
+    // 只能手动指定为false
+    this.playState.isPlay = false
     emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
       if (data.data) {
         // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
@@ -75,7 +77,15 @@ struct Play {
     if (this.playState.isPlay) {
       await HMAVPlayer.pausePlay()
     } else {
-      await HMAVPlayer.singlePlay(songs[this.activeIndex])
+      // if (this.playState.time) {
+      //   console.log("Play_this.playState.time:", JSON.stringify(this.playState.time))
+      //   const AVPlayer = await HMAVPlayer.init()
+      //   console.log("Play_AVPlayer:", JSON.stringify(AVPlayer.state))
+      //   AVPlayer.url = this.playState.url
+      // } else {
+
+      await HMAVPlayer.singlePlay(songs[this.playState.playIndex])
+      // }
     }
   }
 
@@ -121,7 +131,7 @@ struct Play {
           Stack({ alignContent: Alignment.Top }) {
             Row() {
               Row() {
-                Image(songs[0].img)
+                Image(this.playState.img || songs[0].img)
                   .width('70%')
                   .borderRadius(400)
               }

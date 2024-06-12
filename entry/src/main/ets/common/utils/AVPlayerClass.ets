@@ -39,7 +39,7 @@ export class AVPlayerClass {
       }
     })
     // 持久化当前播放的数据
-    MyPreferences.saveData(PLAYSTATE,playState)
+    MyPreferences.saveData(PLAYSTATE, playState)
   }
 
   // 创建播放器的方法
@@ -49,6 +49,19 @@ export class AVPlayerClass {
     }
 
     const AVPlayer = await media.createAVPlayer()
+
+    // 读取首选项的播放状态
+    const playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
+    // 加载播放器状态(6种)
+    // 有可能播放过强制退出,手动重置为未播放
+    playState.isPlay = false
+    this.time = playState.time ?? 0
+    this.duration = playState.duration ?? 0
+    this.playIndex = playState.playIndex ?? -1
+    this.playList = playState.playList ?? []
+    this.playMode = playState.playMode ?? "auto"
+    // 更新播放状态
+    this.updateState(playState)
 
     // 监听状态
     AVPlayer.on('stateChange', (state) => {
@@ -66,7 +79,7 @@ export class AVPlayerClass {
         case 'prepared':
         // prepare调用成功后上报该状态机
         // 调用播放接口开始播放
-          AVPlayer.play();
+          AVPlayer.seek(this.time);
           break;
         case 'playing':
           this.isPlay = true
@@ -114,22 +127,25 @@ export class AVPlayerClass {
     })
     //  监听播放时长
     AVPlayer.on('timeUpdate', (time) => {
-      this.time = time
-      // 收集要通知的信息
-      const playState: PlayStateType = {
-        img: this.playList[this.playIndex]?.img,
-        name: this.playList[this.playIndex]?.name,
-        author: this.playList[this.playIndex]?.author,
-        url: this.playList[this.playIndex]?.url,
-        playIndex: this.playIndex,
-        time: this.time,
-        duration: this.duration,
-        isPlay: this.isPlay,
-        playMode: this.playMode,
-        playList: this.playList
+      // 大坑,seek完了仍然会先走update为0，要恢复进度，防止将0的进度写入首选项进行播放
+      if ((time !== 0 && this.time !== time) || AVPlayer.state === "paused") {
+        this.time = time
+        // 收集要通知的信息
+        const playState: PlayStateType = {
+          img: this.playList[this.playIndex].img,
+          name: this.playList[this.playIndex].name,
+          author: this.playList[this.playIndex].author,
+          url: this.playList[this.playIndex].url,
+          playIndex: this.playIndex,
+          time: this.time,
+          duration: this.duration,
+          isPlay: this.isPlay,
+          playMode: this.playMode,
+          playList: this.playList
+        }
+        // 通知页面和首选项
+        this.updateState(playState)
       }
-      // // 通知页面
-      this.updateState(playState)
     })
 
     //  监听设置播放时长
@@ -150,9 +166,9 @@ export class AVPlayerClass {
   async singlePlay(song: songItemType) {
     const AVPlayer = await this.init()
     // 每次调用播放的时候,如果播放器不处于暂停,都要重置掉之前的播放状态
-    if (AVPlayer.state !== "paused") {
-      await AVPlayer.reset()
-    }
+    // if (AVPlayer.state !== "paused") {
+    //   await AVPlayer.reset()
+    // }
     // 判断是不是列表中的歌曲
     const isList = this.playList.some((item: songItemType) => item.id === song.id)
     // 如果是歌曲列表中的歌曲
@@ -164,9 +180,13 @@ export class AVPlayerClass {
           this.changePlay()
         } else {
           // 恢复播放进度
+          console.log("走到这里了吗", this.time)
           AVPlayer.seek(this.time)
           // AVPlayer.play()
         }
+      } else if (!AVPlayer.url) {
+        // 如果url为空,则继续播放
+        AVPlayer.url = song.url
       } else {
         // 切换歌曲(更新播放索引切换歌曲)
         this.playIndex = this.playList.findIndex((item: songItemType) => item.id === song.id)
@@ -246,13 +266,12 @@ export class AVPlayerClass {
       return
     }
     if (this.playMode === 'random' && this.playList.length > 1) {
-      let index:number
+      let index: number
       do {
         index = Math.floor(Math.random() * this.playList.length)
       } while (index === this.playIndex)
       this.playIndex = index
-    }
-    else {
+    } else {
       this.playIndex++
       // 有可能加超过列表
       this.playIndex = (this.playIndex + this.playList.length) % this.playList.length

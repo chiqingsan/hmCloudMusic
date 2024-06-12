@@ -31,7 +31,8 @@ struct HomeIndex {
     windowManager.settingStatusBar(true)
     // 获取持久化信息
     this.playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
-
+    // 只能手动指定为false
+    this.playState.isPlay = false
     emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
       if (data.data) {
         // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
