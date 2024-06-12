@@ -1,9 +1,11 @@
 import { songs } from '../constants/MusicConstants'
+import { HMAVPlayer } from '../utils/AVPlayerClass'
+
 @Component
 struct PlayerNav {
   build() {
     Row() {
-      Row({space:10}) {
+      Row({ space: 10 }) {
         Image(songs[0].img)
           .width(35)
           .aspectRatio(1)
@@ -17,7 +19,8 @@ struct PlayerNav {
         }.alignItems(HorizontalAlign.Start)
       }.height('100%')
       .alignItems(VerticalAlign.Center)
-      Row({space:16}) {
+
+      Row({ space: 16 }) {
         Image($r("app.media.ic_prev"))
           .width(20)
           .aspectRatio(1)
@@ -25,6 +28,9 @@ struct PlayerNav {
         Image($r('app.media.ic_play'))
           .fillColor('#4cafc6')
           .width(20)
+          .onClick(() => {
+            HMAVPlayer.singlePlay(songs[0])
+          })
 
         Image($r('app.media.ic_next'))
           .width(20)
