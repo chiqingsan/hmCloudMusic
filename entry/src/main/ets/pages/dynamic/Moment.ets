@@ -3,7 +3,8 @@ import { momentListType } from '../../models/index'
 
 @Component
 struct Moment {
-  @StorageProp("topHeight") topHeight:number = 0
+  @StorageProp("topHeight") topHeight: number = 0
+
   build() {
     Column() {
       Row() {
@@ -12,6 +13,7 @@ struct Moment {
       }
       .padding(24)
       .width('100%')
+
       Row() {
         List({ space: 12 }) {
           ForEach(momentList, (item: momentListType) => {
@@ -49,6 +51,7 @@ struct Moment {
                     .alignItems(HorizontalAlign.Start)
                     .justifyContent(FlexAlign.SpaceBetween)
                     .padding(12)
+
                     Image($r("app.media.ic_single_play"))
                       .width(20)
                       .fillColor('#ececec')
@@ -58,10 +61,11 @@ struct Moment {
                   .width('100%')
                   .borderRadius(8)
                   .clip(true)
+
                   Row({ space: 20 }) {
                     Row() {
                       Image($r('app.media.ic_share'))
-                        .width(20)
+                        .width(18)
                         .fillColor('#c9c8cd')
                       Text('分享')
                         .fontColor('#9e9da2')
@@ -71,7 +75,7 @@ struct Moment {
 
                     Row() {
                       Image($r('app.media.ic_comment_o'))
-                        .width(20)
+                        .width(18)
                         .fillColor('#c9c8cd')
                       Text(item.comment.toString())
                         .fontColor('#9e9da2')
@@ -81,7 +85,7 @@ struct Moment {
 
                     Row() {
                       Image($r('app.media.ic_like'))
-                        .width(20)
+                        .width(18)
                         .fillColor('#c9c8cd')
                       Text(item.like.toString())
                         .fontColor('#9e9da2')
@@ -116,14 +120,14 @@ struct Moment {
         }
         .width('100%')
         .height('100%')
-        .padding({ right: 32, left: 16})
+        .padding({ right: 32, left: 16 })
 
       }
       .layoutWeight(1)
     }
     .width('100%')
     .height('100%')
-    .padding({top:this.topHeight})
+    .padding({ top: this.topHeight })
   }
 }
 
