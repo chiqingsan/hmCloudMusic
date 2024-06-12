@@ -88,6 +88,16 @@ struct Play {
     }
   }
 
+  // 上一首
+  previousOne() {
+    HMAVPlayer.previous()
+  }
+
+  // 下一首
+  nextSong() {
+    HMAVPlayer.next()
+  }
+
   @Builder
   deleteButton(index: number) {
     Button('删除')
@@ -293,6 +303,9 @@ struct Play {
               Image($r("app.media.ic_prev"))
                 .fillColor(Color.White)
                 .width(30)
+                .onClick(() => {
+                  this.previousOne()
+                })
 
               // 播放按钮
               Image(this.playState.isPlay ? $r('app.media.ic_paused') : $r('app.media.ic_play'))
@@ -305,6 +318,9 @@ struct Play {
               Image($r('app.media.ic_next'))
                 .fillColor(Color.White)
                 .width(30)
+                .onClick(() => {
+                  this.nextSong()
+                })
               // 播放列表
               Image($r('app.media.ic_song_list'))
                 .fillColor(Color.White)

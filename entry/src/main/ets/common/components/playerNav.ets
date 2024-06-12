@@ -16,6 +16,16 @@ struct PlayerNav {
     }
   }
 
+  // 上一首
+  previousOne() {
+    HMAVPlayer.previous()
+  }
+
+  // 下一首
+  nextSong() {
+    HMAVPlayer.next()
+  }
+
   build() {
     Row() {
       Row({ space: 10 }) {
@@ -40,7 +50,7 @@ struct PlayerNav {
           .fillColor('#4cafc6')
           .enabled(this.activeIndex >= 0)
           .onClick(() => {
-            HMAVPlayer.singlePlay(songs[--this.activeIndex])
+            this.previousOne()
           })
         Image(this.playState?.isPlay ? $r("app.media.ic_paused") : $r("app.media.ic_play"))
           .fillColor('#4cafc6')
@@ -55,8 +65,7 @@ struct PlayerNav {
           .fillColor('#4cafc6')
           .enabled(this.activeIndex < songs.length)
           .onClick(() => {
-
-            HMAVPlayer.singlePlay(songs[++this.activeIndex])
+            this.nextSong()
           })
       }.height('100%')
     }

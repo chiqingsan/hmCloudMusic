@@ -74,13 +74,21 @@ export class AVPlayerClass {
           break;
         case 'completed':
         // 播放结束后触发该状态机上报
-          if (this.playMode === "repeat") {
-            AVPlayer.play()
-          } else {
-            // 重置播放状态
-            AVPlayer.reset()
+          if (this.playMode === 'random' && this.playList.length > 1) {
+            let index: number
+            do {
+              index = Math.floor(Math.random() * this.playList.length)
+            } while (index === this.playIndex)
+            this.playIndex = index
+          } else if (this.playMode === 'auto') {
+            this.playIndex++
+            // 有可能加超过列表
+            this.playIndex = (this.playIndex + this.playList.length) % this.playList.length
           }
-          break;
+        // 更新完索引切换歌曲即可
+        // 如果是单曲循环,则直接播放自己本身
+          this.singlePlay(this.playList[this.playIndex])
+          break
         case 'stopped':
         // stop接口成功调用后触发该状态机上报
           AVPlayer.reset();
@@ -207,6 +215,45 @@ export class AVPlayerClass {
     }
     // 通知页面
     this.updateState(playState)
+  }
+
+  // 上一首
+  previous() {
+    if (this.playList.length === 0) {
+      return
+    }
+    if (this.playMode === 'random' && this.playList.length > 1) {
+      let index: number
+      do {
+        index = Math.floor(Math.random() * this.playList.length)
+      } while (index === this.playIndex)
+      this.playIndex = index
+    } else {
+      this.playIndex--
+      // 有可能减到负数
+      this.playIndex = (this.playIndex + this.playList.length) % this.playList.length
+    }
+    this.singlePlay(this.playList[this.playIndex])
+  }
+
+  // 下一首
+  next() {
+    if (this.playList.length === 0) {
+      return
+    }
+    if (this.playMode === 'random' && this.playList.length > 1) {
+      let index:number
+      do {
+        index = Math.floor(Math.random() * this.playList.length)
+      } while (index === this.playIndex)
+      this.playIndex = index
+    }
+    else {
+      this.playIndex++
+      // 有可能加超过列表
+      this.playIndex = (this.playIndex + this.playList.length) % this.playList.length
+    }
+    this.singlePlay(this.playList[this.playIndex])
   }
 }
 
