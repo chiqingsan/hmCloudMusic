@@ -12,12 +12,11 @@ import { windowManager } from '../common/utils/windowManager'
 @Entry
 @Component
 struct HomeIndex {
-  @StorageProp("bottomHeight") bottomHeight:number = 0
+  @StorageProp("bottomHeight") bottomHeight: number = 0
   @State
   currentName: string = 'recommend'
   @State
   opacityNum: number = 1
-
 
   aboutToAppear(): void {
     // 开始沉浸式状态栏
@@ -26,13 +25,8 @@ struct HomeIndex {
   }
 
   onPageShow(): void {
-    // 开始沉浸式状态栏
-    windowManager.enableFullScreen(true)
-    windowManager.settingStatusBar(true)
+
   }
-
-
-
 
   // tabBar组件
   @Builder
@@ -59,7 +53,7 @@ struct HomeIndex {
     .width('100%')
     .alignItems(HorizontalAlign.Center)
     .justifyContent(FlexAlign.SpaceBetween)
-    .animation({duration:500})
+    .animation({ duration: 500 })
   }
 
   build() {
@@ -86,14 +80,15 @@ struct HomeIndex {
         }
         .scrollable(false)
         .backgroundColor("#2D2A2A")
-        .padding({bottom:this.bottomHeight})
+        .padding({ bottom: this.bottomHeight })
         .onTabBarClick(index => {
-            this.currentName = tabsData[index].name
+          this.currentName = tabsData[index].name
         })
+
         // 背景播放
-        if(this.currentName!=='mine'){
+        if (this.currentName !== 'mine') {
           PlayerNav()
-            .translate({ y: -56-this.bottomHeight })
+            .translate({ y: -56 - this.bottomHeight })
             .onClick(() => {
               router.pushUrl({
                 url: 'pages/play/Play'
@@ -108,6 +103,7 @@ struct HomeIndex {
     .backgroundColor('#121215')
     .opacity(this.opacityNum)
   }
+
   // 页面换效果,避免滑动切换效果
   // pageTransition() {
   //   PageTransitionEnter({ duration: 200})

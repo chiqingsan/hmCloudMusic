@@ -2,6 +2,7 @@ import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
 import { AbilityConstant, Want } from '@kit.AbilityKit';
+import { HMAVPlayer } from "../common/utils/AVPlayerClass"
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
@@ -22,6 +23,8 @@ export default class EntryAbility extends UIAbility {
     // await win.showWindow()
     // win.setUIContent("pages/start/Advertisement")
 
+    // 初始化AVPlayer播放器
+    HMAVPlayer.init()
     windowStage.loadContent('pages/Index', (err, data) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
