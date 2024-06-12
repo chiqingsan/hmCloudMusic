@@ -1,5 +1,8 @@
 import { media } from '@kit.MediaKit'
 import { songItemType } from '../../models'
+import { emitter } from '@kit.BasicServicesKit'
+import { EmitEventType } from '../constants/EventConstants'
+import { PlayStateType } from '../../models/playState'
 
 export class AVPlayerClass {
   // 当前是否播放
@@ -24,6 +27,17 @@ export class AVPlayerClass {
       .then((results) => {
         this.player = results
       })
+  }
+
+  // 更新歌曲信息至页面
+  static updateState(playState: PlayStateType) {
+    emitter.emit({
+      eventId: EmitEventType.UPDATE_STATE
+    }, {
+      data: {
+        playStateStr: JSON.stringify(playState)
+      }
+    })
   }
 
   // 创建播放器的方法
