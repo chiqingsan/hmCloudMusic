@@ -1,6 +1,19 @@
 {
   "app": {
     "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:\\Users\\chiqingsan\\.ohos\\config\\default_HmCloudMusic_0Zh3s6n6dM1new2_eizSoA3PBKVh2a2X2pz4Hd3nCn8=.cer",
+          "storePassword": "0000001BE9269DD4BA36952B1FEF426D075031E44B72F4550FEE6EF43AD10FDB7752677C68040D280860D3",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BB6179187BC4B26AF3E70482E8C97452EB5594CA234D6C9C30B6C96629F03ACAE7D6E4F663A9DC5",
+          "profile": "C:\\Users\\chiqingsan\\.ohos\\config\\default_HmCloudMusic_0Zh3s6n6dM1new2_eizSoA3PBKVh2a2X2pz4Hd3nCn8=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\chiqingsan\\.ohos\\config\\default_HmCloudMusic_0Zh3s6n6dM1new2_eizSoA3PBKVh2a2X2pz4Hd3nCn8=.p12"
+        }
+      }
     ],
     "products": [
       {

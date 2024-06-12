@@ -1,4 +1,5 @@
 import { songs } from '../../common/constants/MusicConstants'
+import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
 import { songItemType } from '../../models/music'
 
 @Entry
@@ -6,9 +7,10 @@ import { songItemType } from '../../models/music'
 struct Play {
   @StorageProp("topHeight") topHeight: number = 0
   @StorageProp("bottomHeight") bottomHeight: number = 0
+  @State isPlay: boolean = false
   @State opacityNum: number = 1
-  @State panelHeight: string = '0%'
   @State isShow: boolean = false
+  @State activeIndex: number = 0
 
   // 时长数字(ms)转字符串
   number2time(number: number) {
@@ -25,6 +27,15 @@ struct Play {
       .padStart(2, '0')
   }
 
+  async playMusic() {
+    // 同步播放状态
+    if (HMAVPlayer.isPlay) {
+      await HMAVPlayer.pausePlay()
+    } else {
+      await HMAVPlayer.singlePlay(songs[this.activeIndex])
+    }
+  }
+
   @Builder
   deleteButton(index: number) {
     Button('删除')
@@ -37,12 +48,6 @@ struct Play {
 
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
-      // 播放
-      // 变色背景
-      // Image(songs[0].img)
-      //   .width('100%')
-      //   .height('100%')
-      //   .blur(1000)
       // 内容
       Column() {
         // //   播放界面
@@ -192,9 +197,12 @@ struct Play {
                 .width(30)
 
               // 播放按钮
-              Image($r('app.media.ic_play'))
+              Image(this.isPlay ? $r('app.media.ic_paused') : $r('app.media.ic_play'))
                 .fillColor(Color.White)
                 .width(50)
+                .onClick(() => {
+                  this.playMusic()
+                })
               // 下一首
               Image($r('app.media.ic_next'))
                 .fillColor(Color.White)
@@ -342,7 +350,6 @@ struct Play {
       }
       .height(400)
     }
-    .height(this.panelHeight)
     .animation({
       duration: 300
     })

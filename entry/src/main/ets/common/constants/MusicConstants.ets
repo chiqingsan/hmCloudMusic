@@ -1,4 +1,10 @@
-import { songItemType, recommendListType, recommendDailyType, favoriteListType, momentListType } from '../../models/index'
+import {
+  songItemType,
+  recommendListType,
+  recommendDailyType,
+  favoriteListType,
+  momentListType
+} from '../../models/index'
 import { TabClass } from '../../models/index'
 
 // TabBar数据
@@ -24,6 +30,7 @@ export const tabsData: TabClass[] = [
   name: 'mine',
   icon: $r("app.media.ic_mine")
 }]
+
 // 轮播图数据
 export const swiperList: string[] = [
   "http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/banner1.png",
@@ -32,6 +39,7 @@ export const swiperList: string[] = [
   "http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/banner4.png",
   "http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/banner5.png"
 ]
+
 // 每日推荐数据
 export const dailyRecommend: recommendDailyType[] = [
   {
@@ -63,6 +71,7 @@ export const dailyRecommend: recommendDailyType[] = [
     bottom: '#174847'
   }
 ]
+
 // 推荐歌单数据
 export const recommendList: recommendListType[] = [
   {
@@ -93,6 +102,7 @@ export const recommendList: recommendListType[] = [
 
 
 ]
+
 // 歌曲列表
 export const songs: songItemType[] = [
   {
@@ -209,13 +219,15 @@ export const songs: songItemType[] = [
     id: '0015'
   }
 ]
+
 // 喜欢列表
 export const favoriteList: favoriteListType = {
   name: "我喜欢的音乐",
-  nickName: "黑马程序员",
+  nickName: "chiqingsan",
   avatar: $r('app.media.logo'),
   songs: songs
 }
+
 // 动态列表
 export const momentList: momentListType[] = [
   {
