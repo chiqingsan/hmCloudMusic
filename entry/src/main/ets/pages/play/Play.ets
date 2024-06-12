@@ -18,6 +18,9 @@ struct Play {
   @State randomShakenX: number = 0
   @State randomShakenY: number = 0
   @State randomColor: string = 'rgb(0,0,0)'
+  @State progressBarState: boolean = false
+  // 进度条转跳转防抖
+  jumpTimer: number = -1
   // 订阅事件
   @State @Watch('changeAnimate') playState: PlayStateType = {} as PlayStateType
 
@@ -26,6 +29,7 @@ struct Play {
       if (data.data) {
         // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
         this.playState = data.data?.playStateStr || {} as PlayStateType
+        // this.progressBarNum = this.playState.time
       }
     })
   }
@@ -73,8 +77,15 @@ struct Play {
   }
 
   // 跳转播放
-  jumpPlayback(val: number) {
-
+  async jumpPlayback(val: number, mode: SliderChangeMode) {
+    // console.log(mode.toString())
+    if (mode === SliderChangeMode.End || mode === SliderChangeMode.Click) {
+      // console.log("val:", val)
+      this.playState.time = val
+      const AVPlayer = await HMAVPlayer.init()
+      // await AVPlayer.pause()
+      AVPlayer.seek(val)
+    }
   }
 
   @Builder
@@ -235,8 +246,8 @@ struct Play {
                 .selectedColor(Color.White)
                 .trackColor('#ccc5c5c5')
                 .trackThickness(2)
-                .onChange((val) => {
-                  this.jumpPlayback(val)
+                .onChange((val, mode) => {
+                  this.jumpPlayback(val, mode)
                 })
               Text(this.number2time(this.playState.duration || 0))
                 .fontSize(12)

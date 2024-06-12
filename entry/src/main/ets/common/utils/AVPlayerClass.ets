@@ -121,8 +121,13 @@ export class AVPlayerClass {
     })
 
     //  监听设置播放时长
-    AVPlayer.on('seekDone', () => {
+    AVPlayer.on('seekDone', async (time) => {
+      // 及时更新当前播放的进度
+      this.time = time
+      console.log("seekDone:", time)
+      // if (AVPlayer.state === "playing") {
       AVPlayer.play()
+      // }
     })
 
     this.player = AVPlayer

@@ -31,7 +31,7 @@ struct HomeIndex {
       if (data.data) {
         // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
         this.playState = data.data?.playStateStr || {} as PlayStateType
-        console.log(JSON.stringify(data.data));
+        // console.log(JSON.stringify(data.data));
       }
     })
   }
