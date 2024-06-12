@@ -258,10 +258,38 @@ struct Play {
 
             // 切换
             Row() {
-              Image($r('app.media.ic_auto'))
-                .fillColor(Color.White)
-                .width(30)
+              // 播放模式切换
+              if (this.playState.playMode === 'auto') {
+                Image($r("app.media.ic_auto"))
+                  .fillColor(Color.White)
+                  .width(30)
+                  .onClick(() => {
+                    HMAVPlayer.changeMode('repeat')
+                  })
+              } else if (this.playState.playMode === 'repeat') {
+                Image($r("app.media.ic_repeat"))
+                  .fillColor(Color.White)
+                  .width(30)
+                  .onClick(() => {
+                    HMAVPlayer.changeMode('random')
+                  })
+              } else if (this.playState.playMode === 'random') {
+                Image($r("app.media.ic_random"))
+                  .fillColor(Color.White)
+                  .width(30)
+                  .onClick(() => {
+                    HMAVPlayer.changeMode('auto')
+                  })
+              } else {
+                Image($r("app.media.ic_auto"))
+                  .fillColor(Color.White)
+                  .width(30)
+                  .onClick(() => {
+                    HMAVPlayer.changeMode('repeat')
+                  })
+              }
 
+              // 上一首
               Image($r("app.media.ic_prev"))
                 .fillColor(Color.White)
                 .width(30)

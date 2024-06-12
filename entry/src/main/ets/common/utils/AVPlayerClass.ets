@@ -188,6 +188,26 @@ export class AVPlayerClass {
     const AVPlayer = await this.init()
     await AVPlayer.pause()
   }
+
+  // 切换播放模式
+  changeMode(mode: 'auto' | 'repeat' | 'random') {
+    this.playMode = mode
+    // 更新至页面（有可能暂停时切换）
+    const playState: PlayStateType = {
+      img: this.playList[this.playIndex]?.img,
+      name: this.playList[this.playIndex]?.name,
+      author: this.playList[this.playIndex]?.author,
+      url: this.playList[this.playIndex]?.url,
+      playIndex: this.playIndex,
+      time: this.time,
+      duration: this.duration,
+      isPlay: this.isPlay,
+      playMode: this.playMode,
+      playList: this.playList
+    }
+    // 通知页面
+    this.updateState(playState)
+  }
 }
 
 
