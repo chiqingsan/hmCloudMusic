@@ -3,6 +3,8 @@ import { songItemType } from '../../models'
 import { emitter } from '@kit.BasicServicesKit'
 import { EmitEventType } from '../constants/EventConstants'
 import { PlayStateType } from '../../models/playState'
+import { MyPreferences } from './Preference'
+import { PLAYSTATE } from '../constants/Persistence'
 
 export class AVPlayerClass {
   // 当前是否播放
@@ -36,6 +38,8 @@ export class AVPlayerClass {
         playStateStr: playState
       }
     })
+    // 持久化当前播放的数据
+    MyPreferences.saveData(PLAYSTATE,playState)
   }
 
   // 创建播放器的方法

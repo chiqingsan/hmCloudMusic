@@ -4,6 +4,8 @@ import { songItemType } from '../../models/music'
 import { PlayStateType } from '../../models/playState'
 import { emitter } from '@kit.BasicServicesKit'
 import { EmitEventType } from '../../common/constants/EventConstants'
+import { MyPreferences } from '../../common/utils/Preference'
+import { PLAYSTATE } from '../../common/constants/Persistence'
 
 @Entry
 @Component
@@ -25,6 +27,7 @@ struct Play {
   @State @Watch('changeAnimate') playState: PlayStateType = {} as PlayStateType
 
   aboutToAppear(): void {
+    this.playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
     emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
       if (data.data) {
         // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType

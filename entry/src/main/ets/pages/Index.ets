@@ -12,6 +12,8 @@ import { emitter } from '@kit.BasicServicesKit'
 import { EmitEventType } from '../common/constants/EventConstants'
 import { PlayStateType } from '../models/playState'
 import { JSON } from '@kit.ArkTS'
+import { MyPreferences } from '../common/utils/Preference'
+import { PLAYSTATE } from '../common/constants/Persistence'
 
 @Entry
 @Component
@@ -27,6 +29,9 @@ struct HomeIndex {
     // 开始沉浸式状态栏
     windowManager.enableFullScreen(true)
     windowManager.settingStatusBar(true)
+    // 获取持久化信息
+    this.playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
+
     emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
       if (data.data) {
         // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType

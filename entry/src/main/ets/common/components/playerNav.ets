@@ -7,6 +7,8 @@ struct PlayerNav {
   activeIndex: number = 0
   @Link playState: PlayStateType
 
+
+
   async playMusic() {
     // 同步播放状态
     if (this.playState?.isPlay) {
