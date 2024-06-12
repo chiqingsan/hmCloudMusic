@@ -1,6 +1,9 @@
 import { songs } from '../../common/constants/MusicConstants'
 import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
 import { songItemType } from '../../models/music'
+import { PlayStateType } from '../../models/playState'
+import { emitter } from '@kit.BasicServicesKit'
+import { EmitEventType } from '../../common/constants/EventConstants'
 
 @Entry
 @Component
@@ -11,6 +14,21 @@ struct Play {
   @State opacityNum: number = 1
   @State isShow: boolean = false
   @State activeIndex: number = 0
+  @State randomNum: number = 0
+  @State randomShakenX: number = 0
+  @State randomShakenY: number = 0
+  @State randomColor: string = 'rgb(0,0,0)'
+  // 订阅事件
+  @State @Watch('changeAnimate') playState: PlayStateType = {} as PlayStateType
+
+  aboutToAppear(): void {
+    emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
+      if (data.data) {
+        // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
+        this.playState = data.data?.playStateStr || {} as PlayStateType
+      }
+    })
+  }
 
   // 时长数字(ms)转字符串
   number2time(number: number) {
@@ -27,13 +45,36 @@ struct Play {
       .padStart(2, '0')
   }
 
+  // 动画函数
+  changeAnimate() {
+    if (this.playState.isPlay) {
+      this.randomNum = Math.random() * 50
+      this.randomShakenX = 2 - Math.random() * 4
+      this.randomShakenY = 2 - Math.random() * 4
+      this.randomColor =
+        `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)})`
+    } else {
+      this.randomNum = 0
+      this.randomShakenX = 0
+      this.randomShakenY = 0
+      this.randomColor =
+        `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)})`
+    }
+  }
+
+  // 播放和暂停
   async playMusic() {
     // 同步播放状态
-    if (HMAVPlayer.isPlay) {
+    if (this.playState.isPlay) {
       await HMAVPlayer.pausePlay()
     } else {
       await HMAVPlayer.singlePlay(songs[this.activeIndex])
     }
+  }
+
+  // 跳转播放
+  jumpPlayback(val: number) {
+
   }
 
   @Builder
@@ -67,6 +108,13 @@ struct Play {
               .borderRadius(400)
               .clip(true)
               .aspectRatio(1)
+              .shadow({
+                radius: this.randomNum,
+                color: this.randomColor
+              })
+              .animation({
+                duration: 1000,
+              })
             }
             .margin({
               top: 50
@@ -93,37 +141,45 @@ struct Play {
           // 歌曲信息
           Stack() {
             Column({ space: 8 }) {
-              Text(songs[0].name)
+              Text(this.playState.name || songs[0].name)
                 .fontSize(28)
                 .fontWeight(FontWeight.Bold)
                 .fontColor($r('app.color.primary_dark'))
-              Text(songs[0].author)
+              Text(this.playState.author || songs[0].author)
                 .fontSize(18)
                 .fontColor($r('app.color.primary_dark'))
             }
             .layoutWeight(1)
             .justifyContent(FlexAlign.Center)
             .zIndex(1)
+            .translate({
+              x: this.randomShakenX,
+              y: this.randomShakenY
+            })
 
             Column({ space: 8 }) {
-              Text(songs[0].name)
+              Text(this.playState.name || songs[0].name)
                 .fontSize(28)
                 .fontWeight(FontWeight.Bold)
                 .fontColor($r('app.color.primary_light'))
-              Text(songs[0].author)
+              Text(this.playState.author || songs[0].author)
                 .fontSize(18)
                 .fontColor($r('app.color.primary_light'))
             }
             .layoutWeight(1)
             .justifyContent(FlexAlign.Center)
             .zIndex(2)
+            .translate({
+              x: this.randomShakenX,
+              y: this.randomShakenY
+            })
 
             Column({ space: 8 }) {
-              Text(songs[0].name)
+              Text(this.playState.name || songs[0].name)
                 .fontSize(28)
                 .fontWeight(FontWeight.Bold)
                 .fontColor(Color.White)
-              Text(songs[0].author)
+              Text(this.playState.author || songs[0].author)
                 .fontSize(18)
                 .fontColor(Color.White)
             }
@@ -166,20 +222,23 @@ struct Play {
           Column() {
             // 进度条
             Row({ space: 4 }) {
-              Text('00:00')
+              Text(this.number2time(this.playState.time || 0))
                 .fontSize(12)
                 .fontColor(Color.White)
               Slider({
-                value: 0,
+                value: this.playState.time || 0,
                 min: 0,
-                max: 0
+                max: this.playState.duration || 0
               })
                 .layoutWeight(1)
                 .blockColor(Color.White)
                 .selectedColor(Color.White)
                 .trackColor('#ccc5c5c5')
                 .trackThickness(2)
-              Text('00:00')
+                .onChange((val) => {
+                  this.jumpPlayback(val)
+                })
+              Text(this.number2time(this.playState.duration || 0))
                 .fontSize(12)
                 .fontColor(Color.White)
             }
@@ -197,7 +256,7 @@ struct Play {
                 .width(30)
 
               // 播放按钮
-              Image(this.isPlay ? $r('app.media.ic_paused') : $r('app.media.ic_play'))
+              Image(this.playState.isPlay ? $r('app.media.ic_paused') : $r('app.media.ic_play'))
                 .fillColor(Color.White)
                 .width(50)
                 .onClick(() => {
@@ -217,7 +276,6 @@ struct Play {
                     showClose: false
                   })
                 .onClick(() => {
-                  // this.panelHeight = '100%'
                   this.isShow = true
                 })
             }
@@ -244,8 +302,6 @@ struct Play {
     .height('100%')
     .backgroundColor(Color.Transparent)
     .opacity(this.opacityNum)
-
-    // .padding({top:this.topHeight,bottom:this.bottomHeight})
 
   }
 

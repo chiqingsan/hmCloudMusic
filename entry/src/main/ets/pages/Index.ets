@@ -27,7 +27,7 @@ struct HomeIndex {
     // 开始沉浸式状态栏
     windowManager.enableFullScreen(true)
     windowManager.settingStatusBar(true)
-    emitter.on({ eventId: 10099 }, (data) => {
+    emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
       if (data.data) {
         // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
         this.playState = data.data?.playStateStr || {} as PlayStateType
@@ -108,8 +108,8 @@ struct HomeIndex {
                 url: 'pages/play/Play'
               })
             })
-            .visibility(this.playState.playList?.length && this.currentName !== 'mine' ? Visibility.Visible :
-            Visibility.Hidden)
+          // .visibility(this.playState.playList?.length && this.currentName !== 'mine' ? Visibility.Visible :
+          // Visibility.Hidden)
 
         }
 

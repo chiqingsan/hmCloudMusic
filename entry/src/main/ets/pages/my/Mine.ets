@@ -4,14 +4,15 @@ import { songItemType, songItemTypeModel } from '../../models/music'
 @Component
 struct Mine {
   columnList: number[] = [0, 1, 2, 3]
+
   build() {
     Column() {
       // 背景
       Column() {
         GridRow({ gutter: 8 }) {
-          ForEach(this.columnList, (item:number)=> {
+          ForEach(this.columnList, (item: number) => {
             GridCol({ span: 3 }) {
-              SongCard({columnIndex: item })
+              SongCard({ columnIndex: item })
             }
           })
         }
@@ -26,6 +27,7 @@ struct Mine {
       .height('75%')
       .width('100%')
       .backgroundColor('#000')
+
       // 个人信息
       Column() {
         Column() {
@@ -100,10 +102,12 @@ struct SongCard {
   columnIndex: number = 0
   @State
   showList: songItemType[] = []
+
   aboutToAppear() {
     this.showList = songs.map(item => new songItemTypeModel(item))
       .sort(() => Math.random() - 0.5)
   }
+
   build() {
     List({ space: 12 }) {
       ForEach(this.showList, (item: songItemType) => {
@@ -111,16 +115,16 @@ struct SongCard {
           Stack() {
             Image(item.img)
               .width('100%')
-              // 播放中动图
-              Row() {
-                Image($r('app.media.ic_playing'))
-                  .width('50%')
-              }
-              .backgroundColor('#7a000000')
-              .width('100%')
-              .height('100%')
-              .justifyContent(FlexAlign.Center)
-              .visibility(Visibility.Hidden)
+            // 播放中动图
+            Row() {
+              Image($r('app.media.ic_playing'))
+                .width('50%')
+            }
+            .backgroundColor('#7a000000')
+            .width('100%')
+            .height('100%')
+            .justifyContent(FlexAlign.Center)
+            .visibility(Visibility.Hidden)
           }
           .width('100%')
           .aspectRatio(1)
@@ -130,6 +134,7 @@ struct SongCard {
       })
     }
     .width('100%')
+    .scrollBar(BarState.Off)
   }
 }
 

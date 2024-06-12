@@ -31,7 +31,7 @@ export class AVPlayerClass {
 
   // 更新歌曲信息至页面
   updateState(playState: PlayStateType) {
-    emitter.emit({ eventId: 10099 }, {
+    emitter.emit({ eventId: EmitEventType.UPDATE_STATE }, {
       data: {
         playStateStr: playState
       }
@@ -120,6 +120,11 @@ export class AVPlayerClass {
       this.updateState(playState)
     })
 
+    //  监听设置播放时长
+    AVPlayer.on('seekDone', () => {
+      AVPlayer.play()
+    })
+
     this.player = AVPlayer
     return this.player
   }
@@ -127,16 +132,24 @@ export class AVPlayerClass {
   // 单首歌播放
   async singlePlay(song: songItemType) {
     const AVPlayer = await this.init()
-    // 每次调用播放的时候,倒要重置掉之前的播放状态
-    await AVPlayer.reset()
+    // 每次调用播放的时候,如果播放器不处于暂停,都要重置掉之前的播放状态
+    if (AVPlayer.state !== "paused") {
+      await AVPlayer.reset()
+    }
     // 判断是不是列表中的歌曲
     const isList = this.playList.some((item: songItemType) => item.id === song.id)
     // 如果是歌曲列表中的歌曲
     if (isList) {
       // 是不是正在播放的
       if (AVPlayer.url === song.url) {
-        // 重新播放（切换当前播放索引的歌曲）
-        this.changePlay()
+        if (this.isPlay) {
+          // 重新播放（切换当前播放索引的歌曲）
+          this.changePlay()
+        } else {
+          // 恢复播放进度
+          AVPlayer.seek(this.time)
+          // AVPlayer.play()
+        }
       } else {
         // 切换歌曲(更新播放索引切换歌曲)
         this.playIndex = this.playList.findIndex((item: songItemType) => item.id === song.id)
