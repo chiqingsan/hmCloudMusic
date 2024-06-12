@@ -6,14 +6,10 @@ export class windowManager {
   // 是否开启沉浸式状态栏
   static enableFullScreen(isOn: boolean) {
     window.getLastWindow(getContext())
-      .then((win) => {
-        win.setWindowLayoutFullScreen(isOn)
+      .then(async (win) => {
+        await win.setWindowLayoutFullScreen(isOn)
 
         if (isOn) {
-
-          if (deviceInfo.deviceType === "2in1") {
-            return
-          }
 
           // 如果开启,则获取安全区的高度, 转换为vp
           const topArea = win.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM)

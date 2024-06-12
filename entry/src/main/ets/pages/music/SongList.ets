@@ -2,12 +2,13 @@ import { favoriteList } from '../../common/constants'
 import { songItemType } from '../../models/index'
 @Component
 struct SongList {
+  @StorageProp("topHeight") topHeight:number = 0
   build() {
     Column() {
       // 播放页
       Column() {
         // 歌单明细
-        Column() {
+        Column({space:20}) {
           // 简介
           Row({ space: 8 }) {
             Row() {
@@ -33,7 +34,7 @@ struct SongList {
             }
             .alignItems(HorizontalAlign.Start)
             .layoutWeight(1)
-          }
+          }.padding({top:this.topHeight})
           // 按钮
           Row() {
             Button() {
@@ -165,8 +166,8 @@ struct SongList {
                     .layoutWeight(1)
 
                     Image($r('app.media.ic_more'))
-                      .width(24)
-                      .height(24)
+                      .width(18)
+                      .aspectRatio(1)
                       .margin({ right: 16 })
                       .fillColor(Color.Gray)
                   }
@@ -189,6 +190,7 @@ struct SongList {
               }
             }
             .layoutWeight(1)
+            .padding({bottom:20})
           }
           .layoutWeight(1)
         }
@@ -202,6 +204,7 @@ struct SongList {
     .width('100%')
     .height('100%')
     .backgroundColor('#121215')
+    // .padding({top:this.topHeight})
   }
 }
 

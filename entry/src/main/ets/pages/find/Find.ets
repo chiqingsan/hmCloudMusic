@@ -2,6 +2,7 @@ import { songs } from '../../common/constants'
 import {songItemType} from '../../models/index'
 @Component
 struct Find {
+  @StorageProp("topHeight") topHeight:number = 0
   build() {
     Column() {
       Row() {
@@ -14,25 +15,26 @@ struct Find {
           ForEach(songs,(item:songItemType,index:number)=>{
             ListItem() {
               Row({space:12}) {
-                Row() {
                   Image(item.img)
                     .borderRadius(8)
                     .width(60)
-                }
                 Column({space:12}) {
                   Text(item.name).fontColor('#e9e9e7')
                   Row({space:4}){
-                    Text('VIP') .fontSize(10)
+                    Text('VIP')
+                      .fontSize(9)
                       .padding({
                         left:6,
                         right:6,
-                        top:2,
-                        bottom:2
+                        top:1,
+                        bottom:1
                       })
                       .border({
                         width:1,
                         color:'#c0a267'
-                      }).borderRadius(10).fontColor('#c0a267')
+                      })
+                      .borderRadius(10)
+                      .fontColor('#c0a267')
                     Text(item.author)
                       .fontColor('#aaa9af')
                       .fontSize(12)
@@ -44,7 +46,7 @@ struct Find {
                 Row() {
                   Image($r('app.media.ic_more'))
                     .fillColor('#aaa9af')
-                    .width(24)
+                    .width(18)
                 }
               }
             }
@@ -58,16 +60,20 @@ struct Find {
             .justifyContent(FlexAlign.Center)
             .padding(16)
           }
-        }.width('100%').height('100%')
+        }
+        .width('100%')
+        .height('100%')
         .padding({
           left:24,
-          right:24
+          right:24,
+          bottom:10
         })
       }
       .layoutWeight(1)
     }
     .width('100%')
     .height('100%')
+    .padding({top:this.topHeight})
   }
 }
 

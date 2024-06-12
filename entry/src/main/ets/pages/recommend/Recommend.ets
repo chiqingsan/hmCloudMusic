@@ -3,6 +3,8 @@ import { recommendListType, recommendDailyType } from '../../models/index'
 
 @Component
 struct Recommend {
+  @StorageProp("topHeight") topHeight:number = 0
+
   @Builder
   SearchInput() {
     Row() {
@@ -200,7 +202,7 @@ struct Recommend {
         }.margin({top:15})
         //   等等...(自由发挥)
       }.layoutWeight(1).padding({bottom:85})
-    }.width("100%").height("100%")
+    }.width("100%").height("100%").padding({top:this.topHeight})
   }
 }
 

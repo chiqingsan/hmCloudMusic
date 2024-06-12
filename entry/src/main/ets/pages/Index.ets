@@ -12,7 +12,6 @@ import { windowManager } from '../common/utils/windowManager'
 @Entry
 @Component
 struct HomeIndex {
-  @StorageProp("topHeight") topHeight:number = 0
   @StorageProp("bottomHeight") bottomHeight:number = 0
   @State
   currentName: string = 'recommend'
@@ -27,7 +26,9 @@ struct HomeIndex {
   }
 
   onPageShow(): void {
-
+    // 开始沉浸式状态栏
+    windowManager.enableFullScreen(true)
+    windowManager.settingStatusBar(true)
   }
 
 
@@ -40,7 +41,7 @@ struct HomeIndex {
       Row() {
         Image(item.icon)
           .fillColor(item.name === this.currentName ? $r('app.color.primary_light') : $r('app.color.primary_dark'))
-          .width(item.name === this.currentName ? 18 : 22)
+          .width(item.name === this.currentName ? 22 : 18)
           .aspectRatio(1)
       }
       .width(22)
@@ -58,6 +59,7 @@ struct HomeIndex {
     .width('100%')
     .alignItems(HorizontalAlign.Center)
     .justifyContent(FlexAlign.SpaceBetween)
+    .animation({duration:500})
   }
 
   build() {
@@ -83,9 +85,10 @@ struct HomeIndex {
           })
         }
         .scrollable(false)
+        .backgroundColor("#2D2A2A")
         .padding({bottom:this.bottomHeight})
         .onTabBarClick(index => {
-          this.currentName = tabsData[index].name
+            this.currentName = tabsData[index].name
         })
         // 背景播放
         if(this.currentName!=='mine'){
@@ -93,7 +96,7 @@ struct HomeIndex {
             .translate({ y: -56-this.bottomHeight })
             .onClick(() => {
               router.pushUrl({
-                url: 'pages/Play'
+                url: 'pages/play/Play'
               })
             })
         }
@@ -102,11 +105,10 @@ struct HomeIndex {
     }
     .width('100%')
     .height('100%')
-    .padding({top:this.topHeight})
     .backgroundColor('#121215')
     .opacity(this.opacityNum)
   }
-  // 页面也换效果,避免滑动切换效果
+  // 页面换效果,避免滑动切换效果
   pageTransition() {
     PageTransitionEnter({ duration: 200})
       .onEnter(() => {
