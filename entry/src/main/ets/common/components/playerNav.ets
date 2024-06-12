@@ -1,21 +1,32 @@
+import { PlayStateType } from '../../models/playState'
 import { songs } from '../constants/MusicConstants'
 import { HMAVPlayer } from '../utils/AVPlayerClass'
 
 @Component
 struct PlayerNav {
   activeIndex: number = 0
+  @Link playState: PlayStateType
+
+  async playMusic() {
+    // 同步播放状态
+    if (this.playState?.isPlay) {
+      await HMAVPlayer.pausePlay()
+    } else {
+      await HMAVPlayer.singlePlay(songs[this.activeIndex])
+    }
+  }
 
   build() {
     Row() {
       Row({ space: 10 }) {
-        Image(songs[0].img)
+        Image(this.playState?.img || songs[0].img)
           .width(35)
           .aspectRatio(1)
           .borderRadius(5)
         Column() {
-          Text(songs[0].name)
+          Text(this.playState?.name || songs[0].name)
             .fontColor('#fff')
-          Text(songs[0].author)
+          Text(this.playState?.author || songs[0].author)
             .fontSize(12)
             .fontColor('#ccc')
         }.alignItems(HorizontalAlign.Start)
@@ -31,11 +42,11 @@ struct PlayerNav {
           .onClick(() => {
             HMAVPlayer.singlePlay(songs[--this.activeIndex])
           })
-        Image($r('app.media.ic_play'))
+        Image(this.playState?.isPlay ? $r("app.media.ic_paused") : $r("app.media.ic_play"))
           .fillColor('#4cafc6')
           .width(20)
           .onClick(() => {
-            HMAVPlayer.singlePlay(songs[this.activeIndex])
+            this.playMusic()
           })
 
         Image($r('app.media.ic_next'))

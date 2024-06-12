@@ -1,3 +1,3 @@
 export enum EmitEventType {
-  UPDATE_STATE
+  UPDATE_STATE = 10099
 }

@@ -8,6 +8,10 @@ import router from '@ohos.router'
 import PlayerNav from '../common/components/playerNav'
 import { tabsData } from '../common/constants'
 import { windowManager } from '../common/utils/windowManager'
+import { emitter } from '@kit.BasicServicesKit'
+import { EmitEventType } from '../common/constants/EventConstants'
+import { PlayStateType } from '../models/playState'
+import { JSON } from '@kit.ArkTS'
 
 @Entry
 @Component
@@ -17,11 +21,19 @@ struct HomeIndex {
   currentName: string = 'recommend'
   @State
   opacityNum: number = 1
+  @State playState: PlayStateType = {} as PlayStateType
 
   aboutToAppear(): void {
     // 开始沉浸式状态栏
     windowManager.enableFullScreen(true)
     windowManager.settingStatusBar(true)
+    emitter.on({ eventId: 10099 }, (data) => {
+      if (data.data) {
+        // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
+        this.playState = data.data?.playStateStr || {} as PlayStateType
+        console.log(JSON.stringify(data.data));
+      }
+    })
   }
 
   onPageShow(): void {
@@ -87,13 +99,18 @@ struct HomeIndex {
 
         // 背景播放
         if (this.currentName !== 'mine') {
-          PlayerNav()
+          PlayerNav({
+            playState: this.playState
+          })
             .translate({ y: -56 - this.bottomHeight })
             .onClick(() => {
               router.pushUrl({
                 url: 'pages/play/Play'
               })
             })
+            .visibility(this.playState.playList?.length && this.currentName !== 'mine' ? Visibility.Visible :
+            Visibility.Hidden)
+
         }
 
       }

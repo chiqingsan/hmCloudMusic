@@ -30,12 +30,10 @@ export class AVPlayerClass {
   }
 
   // 更新歌曲信息至页面
-  static updateState(playState: PlayStateType) {
-    emitter.emit({
-      eventId: EmitEventType.UPDATE_STATE
-    }, {
+  updateState(playState: PlayStateType) {
+    emitter.emit({ eventId: 10099 }, {
       data: {
-        playStateStr: JSON.stringify(playState)
+        playStateStr: playState
       }
     })
   }
@@ -105,7 +103,21 @@ export class AVPlayerClass {
     //  监听播放时长
     AVPlayer.on('timeUpdate', (time) => {
       this.time = time
-      console.log('time:', this.time)
+      // 收集要通知的信息
+      const playState: PlayStateType = {
+        img: this.playList[this.playIndex]?.img,
+        name: this.playList[this.playIndex]?.name,
+        author: this.playList[this.playIndex]?.author,
+        url: this.playList[this.playIndex]?.url,
+        playIndex: this.playIndex,
+        time: this.time,
+        duration: this.duration,
+        isPlay: this.isPlay,
+        playMode: this.playMode,
+        playList: this.playList
+      }
+      // // 通知页面
+      this.updateState(playState)
     })
 
     this.player = AVPlayer
