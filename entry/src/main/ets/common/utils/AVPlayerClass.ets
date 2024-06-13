@@ -1,12 +1,9 @@
 import { media } from '@kit.MediaKit'
 import { songItemType } from '../../models'
-import { emitter } from '@kit.BasicServicesKit'
-import { EmitEventType } from '../constants/EventConstants'
 import { PlayStateType, PlayStateTypeModel } from '../../models/playState'
 import { MyPreferences } from './Preference'
 import { PLAYSTATE } from '../constants/Persistence'
 import { router } from '@kit.ArkUI'
-import { songs } from '../../common/constants/MusicConstants';
 
 
 export class AVPlayerClass {
@@ -343,6 +340,13 @@ export class AVPlayerClass {
         playList: this.playList
       })
     }
+  }
+
+
+  // 释放播放器实例
+  release() {
+    this.player?.reset()
+    this.player?.release()
   }
 }
 

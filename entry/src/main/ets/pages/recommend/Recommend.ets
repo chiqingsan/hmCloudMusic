@@ -3,7 +3,7 @@ import { recommendListType, recommendDailyType } from '../../models/index'
 
 @Component
 struct Recommend {
-  @StorageProp("topHeight") topHeight:number = 0
+  @StorageProp("topHeight") topHeight: number = 0
 
   @Builder
   SearchInput() {
@@ -80,12 +80,12 @@ struct Recommend {
     }
     .width('100%')
     .padding({
-      left:15,
-      right:15,
-      top:8,
-      bottom:8,
+      left: 15,
+      right: 15,
+      top: 8,
+      bottom: 8,
     })
-    .margin({bottom:5})
+    .margin({ bottom: 5 })
     .justifyContent(FlexAlign.SpaceBetween)
   }
 
@@ -116,10 +116,10 @@ struct Recommend {
                       Image(item.img)
                         .width('100%')
                         .aspectRatio(1)
-                        // .border({
-                        //   width:10,
-                        //   color:"#fff"
-                        // })
+                      // .border({
+                      //   width:10,
+                      //   color:"#fff"
+                      // })
                       // Text()
                       //   .width('100%')
                       //   .height(40)
@@ -152,6 +152,7 @@ struct Recommend {
             right: 8
           })
         }
+
         //   推荐歌单
         Column() {
           this.TitleBar('推荐歌单')
@@ -199,10 +200,11 @@ struct Recommend {
             left: 8,
             right: 8
           })
-        }.margin({top:15})
+        }.margin({ top: 15 })
+
         //   等等...(自由发挥)
-      }.layoutWeight(1).padding({bottom:85})
-    }.width("100%").height("100%").padding({top:this.topHeight})
+      }.layoutWeight(1).padding({ bottom: 80 })
+    }.width("100%").height("100%").padding({ top: this.topHeight })
   }
 }
 

@@ -27,17 +27,20 @@ export default class EntryAbility extends UIAbility {
   onDestroy() {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onDestroy');
 
+    // 释放错误观测器
+    errorManager.off("error", errorManagerId)
+    // 释放播放器实例
+    HMAVPlayer.release()
   }
 
-  onWindowStageCreate(windowStage: window.WindowStage) {
+  async onWindowStageCreate(windowStage: window.WindowStage) {
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
     // 启动子窗口来展示开屏广告
-    // todo 开发的时候,不展示开屏
-    // const win = await windowStage.createSubWindow("ad_window")
-    // await win.showWindow()
-    // win.setUIContent("pages/start/Advertisement")
+    const win = await windowStage.createSubWindow("ad_window")
+    await win.showWindow()
+    win.setUIContent("pages/start/Advertisement")
 
 
     windowStage.loadContent('pages/Index', (err, data) => {

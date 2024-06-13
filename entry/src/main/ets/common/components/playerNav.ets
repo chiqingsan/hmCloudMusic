@@ -6,6 +6,7 @@ import { HMAVPlayer } from '../utils/AVPlayerClass'
 @Component
 struct PlayerNav {
   @StorageProp(PLAYSTATE) playState: PlayStateType = new PlayStateTypeModel()
+  @State pressColor: string = "#4cafc6"
 
   async playMusic() {
     try { // 同步播放状态
@@ -28,18 +29,18 @@ struct PlayerNav {
   nextSong() {
     HMAVPlayer.next()
   }
-
+  
   build() {
     Row() {
       Row({ space: 10 }) {
-        Image(this.playState?.img || songs[0].img)
+        Image(this.playState.img)
           .width(35)
           .aspectRatio(1)
           .borderRadius(5)
         Column() {
-          Text(this.playState?.name || songs[0].name)
+          Text(this.playState.name)
             .fontColor('#fff')
-          Text(this.playState?.author || songs[0].author)
+          Text(this.playState.author)
             .fontSize(12)
             .fontColor('#ccc')
         }.alignItems(HorizontalAlign.Start)
@@ -47,14 +48,21 @@ struct PlayerNav {
       .alignItems(VerticalAlign.Center)
 
       Row({ space: 16 }) {
-        Image($r("app.media.ic_prev"))
-          .width(20)
-          .aspectRatio(1)
-          .fillColor('#4cafc6')
-          .onClick(() => {
-            this.previousOne()
-          })
-        Image(this.playState?.isPlay ? $r("app.media.ic_paused") : $r("app.media.ic_play"))
+        Row() {
+          Image($r("app.media.ic_prev"))
+            .width(20)
+            .aspectRatio(1)// .fillColor('#4cafc6')
+              //FF4A7883 按压状态
+            .fillColor('#4cafc6')
+
+        }
+        .padding(5)
+        .backgroundColor(Color.Transparent)
+        .onClick(() => {
+          this.previousOne()
+        })
+
+        Image(this.playState.isPlay ? $r("app.media.ic_paused") : $r("app.media.ic_play"))
           .fillColor('#4cafc6')
           .width(20)
           .onClick(() => {
@@ -77,5 +85,6 @@ struct PlayerNav {
     .padding({ left: 20, right: 20 })
   }
 }
+
 
 export default PlayerNav

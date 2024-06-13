@@ -74,49 +74,48 @@ struct HomeIndex {
   }
 
   build() {
-    Stack() {
-      Stack({ alignContent: Alignment.Bottom }) {
-        Tabs({ barPosition: BarPosition.End }) {
-          ForEach(tabsData, (item: TabClass) => {
-            TabContent() {
-              if (item.name === 'recommend') {
-                Recommend()
-              } else if (item.name === 'find') {
-                Find()
-              } else if (item.name === 'moment') {
-                Moment()
-              } else if (item.name === 'mine') {
-                Mine()
-              } else {
-                SongList()
-              }
+    Stack({ alignContent: Alignment.Bottom }) {
+      Tabs({ barPosition: BarPosition.End }) {
+        ForEach(tabsData, (item: TabClass) => {
+          TabContent() {
+            if (item.name === 'recommend') {
+              Recommend()
+            } else if (item.name === 'find') {
+              Find()
+            } else if (item.name === 'moment') {
+              Moment()
+            } else if (item.name === 'mine') {
+              Mine()
+            } else {
+              SongList()
             }
-            .tabBar(this.getTabBar(item))
-            .backgroundColor('#121215')
-          })
-        }
-        .scrollable(false)
-        .backgroundColor("#2D2A2A")
-        .padding({ bottom: this.bottomHeight })
-        .onTabBarClick(index => {
-          this.currentName = tabsData[index].name
+          }
+          .tabBar(this.getTabBar(item))
+          .backgroundColor('#121215')
         })
-
-        // 背景播放
-        if (this.currentName !== 'mine') {
-          PlayerNav()
-            .translate({ y: -56 - this.bottomHeight })
-            .onClick(() => {
-              router.pushUrl({
-                url: 'pages/play/Play'
-              })
-            })
-            .visibility(this.playState.playList.length && this.currentName !== 'mine' ? Visibility.Visible :
-            Visibility.Hidden)
-
-        }
-
       }
+      .scrollable(false)
+      .backgroundColor("#2D2A2A")
+      .padding({ bottom: this.bottomHeight })
+      .barHeight(56)
+      .onTabBarClick(index => {
+        this.currentName = tabsData[index].name
+      })
+
+      // 背景播放
+      if (this.currentName !== 'mine') {
+        PlayerNav()
+          .translate({ y: -56 - this.bottomHeight })
+          .onClick(() => {
+            router.pushUrl({
+              url: 'pages/play/Play'
+            })
+          })
+          .visibility(this.playState.playList.length && this.currentName !== 'mine' ? Visibility.Visible :
+          Visibility.Hidden)
+      }
+
+
     }
     .width('100%')
     .height('100%')
