@@ -20,6 +20,7 @@ struct Play {
   @State randomShakenY: number = 0
   @State randomColor: string = 'rgb(0,0,0)'
   @State progressBarState: boolean = false
+  @State playlist: songItemType[] = []
   // 进度条转跳转防抖
   jumpTimer: number = -1
   // 订阅事件
@@ -30,6 +31,7 @@ struct Play {
     // AlertDialog.show({ message: JSON.stringify(this.playState, null, 2) })
     // 只能手动指定为false
     this.playState.isPlay = false
+    this.playlist = this.playState.playList
     emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
       if (data.data) {
         // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
@@ -84,7 +86,7 @@ struct Play {
       //   AVPlayer.url = this.playState.url
       // } else {
 
-      await HMAVPlayer.singlePlay(songs[this.playState.playIndex])
+      await HMAVPlayer.singlePlay(this.playState.playList[this.playState.playIndex])
       // }
     }
   }
@@ -111,14 +113,53 @@ struct Play {
     HMAVPlayer.next()
   }
 
+  // 点击列表播放
+  async clickOnTheListToPlay(item: songItemType) {
+    const index = this.playState.playList.findIndex(v => v.id === item.id)
+    this.playState.playIndex = index
+    await HMAVPlayer.singlePlay(this.playState.playList[index])
+    this.isShow = false
+  }
+
   @Builder
-  deleteButton(index: number) {
+  deleteButton(item: songItemType, index: number) {
     Button('删除')
       .backgroundColor($r('app.color.primary_light'))
       .fontColor('#fff')
-      .width(80)
+      .width(75)
       .height('100%')
       .type(ButtonType.Normal)
+      .onClick(async () => {
+        const AVPlayer = await HMAVPlayer.init()
+        // 先更新UI,再去操作数据
+        animateTo({ duration: 1000 }, () => {
+          this.playlist.splice(index, 1)
+        })
+        HMAVPlayer.playList.splice(index, 1)
+        if (AVPlayer.state === "playing" && AVPlayer.url === item.url) {
+          // await AVPlayer.pause()
+          // 直接重置播放的状态
+          await AVPlayer.reset()
+          // 调用下一首继续播放
+          HMAVPlayer.next()
+          return
+        }
+
+        // if (AVPlayer.url === item.url) {
+        //   if (this.playState.playMode === 'random' && this.playState.playList.length > 1) {
+        //     let index: number
+        //     do {
+        //       index = Math.floor(Math.random() * this.playState.playList.length)
+        //     } while (index === this.playState.playIndex)
+        //     this.playState.playIndex = index
+        //   } else {
+        //     this.playState.playIndex--
+        //     // 有可能减到负数
+        //     this.playState.playIndex =
+        //       (this.playState.playIndex + this.playState.playList.length) % this.playState.playList.length
+        //   }
+        // }
+      })
   }
 
   build() {
@@ -377,13 +418,6 @@ struct Play {
   aListOfSongs() {
     // 列表
     Column() {
-      Column()
-        .width('100%')
-        .layoutWeight(1)
-        .onClick(() => {
-          this.isShow = false
-        })
-
       Column() {
         Row() {
           Row() {
@@ -424,7 +458,7 @@ struct Play {
         })
 
         List() {
-          ForEach(songs, (item: songItemType, index: number) => {
+          ForEach(this.playlist, (item: songItemType, index: number) => {
             ListItem() {
               Row() {
                 Row() {
@@ -440,10 +474,10 @@ struct Play {
                   Column() {
                     Text(item.name)
                       .fontSize(14)
-                      .fontColor(index === 0 ? $r('app.color.primary_light') : '#ffa49a9a')
+                      .fontColor(index === this.playState.playIndex ? $r('app.color.primary_light') : '#ffa49a9a')
                     Text(item.author)
                       .fontSize(12)
-                      .fontColor(index === 0 ? $r('app.color.primary_light') : Color.Gray)
+                      .fontColor(index === this.playState.playIndex ? $r('app.color.primary_light') : Color.Gray)
                   }
                   .layoutWeight(1)
                   .alignItems(HorizontalAlign.Start)
@@ -458,15 +492,23 @@ struct Play {
                   .fillColor(Color.Gray)
               }
               .alignItems(VerticalAlign.Center)
+              .onClick(() => {
+                this.clickOnTheListToPlay(item)
+              })
             }
+            .transition({
+              translate: { x: "-150%" },
+              opacity: 0
+            })
             .swipeAction({
-              end: this.deleteButton(index)
+              end: this.deleteButton(item, index),
+
             })
             .border({
               width: { bottom: 1 },
               color: '#12ec5c87'
             })
-          })
+          }, (item: songItemType, index) => item.id)
         }
         .layoutWeight(1)
         .backgroundColor('#ff353333')

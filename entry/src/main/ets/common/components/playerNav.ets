@@ -4,7 +4,7 @@ import { HMAVPlayer } from '../utils/AVPlayerClass'
 
 @Component
 struct PlayerNav {
-  @Link playState: PlayStateType
+  @Consume playState: PlayStateType
 
   async playMusic() {
     // 同步播放状态

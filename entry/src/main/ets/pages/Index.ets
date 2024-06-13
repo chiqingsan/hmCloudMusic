@@ -23,7 +23,7 @@ struct HomeIndex {
   currentName: string = 'recommend'
   @State
   opacityNum: number = 1
-  @State playState: PlayStateType = {} as PlayStateType
+  @Provide playState: PlayStateType = {} as PlayStateType
 
   aboutToAppear(): void {
     // 开始沉浸式状态栏
@@ -59,7 +59,6 @@ struct HomeIndex {
       .width(22)
       .aspectRatio(1)
       .borderRadius(22)
-      // .backgroundColor(item.name === this.currentName ?  : Color.Transparent)
       .justifyContent(FlexAlign.Center)
 
       Text(item.title)
@@ -71,7 +70,7 @@ struct HomeIndex {
     .width('100%')
     .alignItems(HorizontalAlign.Center)
     .justifyContent(FlexAlign.SpaceBetween)
-    .animation({ duration: 500 })
+    .animation({ duration: 1000 })
   }
 
   build() {
@@ -105,9 +104,7 @@ struct HomeIndex {
 
         // 背景播放
         if (this.currentName !== 'mine') {
-          PlayerNav({
-            playState: this.playState
-          })
+          PlayerNav()
             .translate({ y: -56 - this.bottomHeight })
             .onClick(() => {
               router.pushUrl({

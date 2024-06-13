@@ -1,5 +1,7 @@
 import { songs } from '../../common/constants/MusicConstants'
+import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
 import { songItemType, songItemTypeModel } from '../../models/music'
+import { PlayStateType } from '../../models/playState'
 
 @Component
 struct Mine {
@@ -99,6 +101,7 @@ struct Mine {
 
 @Component
 struct SongCard {
+  @Consume playState: PlayStateType
   columnIndex: number = 0
   @State
   showList: songItemType[] = []
@@ -106,6 +109,15 @@ struct SongCard {
   aboutToAppear() {
     this.showList = songs.map(item => new songItemTypeModel(item))
       .sort(() => Math.random() - 0.5)
+  }
+
+  // 播放歌曲
+  playSong(item: songItemType) {
+    if (item.url === this.playState.url) {
+      this.playState.isPlay ? HMAVPlayer.pausePlay() : HMAVPlayer.singlePlay(item)
+    } else {
+      HMAVPlayer.singlePlay(item)
+    }
   }
 
   build() {
@@ -119,17 +131,23 @@ struct SongCard {
             Row() {
               Image($r('app.media.ic_playing'))
                 .width('50%')
+                .aspectRatio(1)
             }
             .backgroundColor('#7a000000')
             .width('100%')
             .height('100%')
             .justifyContent(FlexAlign.Center)
-            .visibility(Visibility.Hidden)
+            .visibility(this.playState?.url === item?.url && this.playState.isPlay ? Visibility.Visible :
+            Visibility.Hidden)
+
           }
           .width('100%')
           .aspectRatio(1)
           .borderRadius(8)
           .clip(true)
+          .onClick(() => {
+            this.playSong(item)
+          })
         }
       })
     }
