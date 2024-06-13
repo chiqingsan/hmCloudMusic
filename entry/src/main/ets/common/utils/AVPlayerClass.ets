@@ -29,6 +29,13 @@ export class AVPlayerClass {
   // 节流标识
   timer: number = -1
 
+  constructor() {
+    this.init()
+      .then((player) => {
+        this.player = player
+      })
+  }
+
   // 更新歌曲信息至页面
   updateState(playState: PlayStateType) {
     // 频繁发送通知和IO读写,可能会造成设备的耗电发热
@@ -176,7 +183,6 @@ export class AVPlayerClass {
     // 判断是不是列表中的歌曲
     const isList = this.playList.some((item: songItemType) => item.id === song.id)
     // 如果是歌曲列表中的歌曲
-    console.log("AVPlayerClass_isList:", JSON.stringify(isList))
     if (isList) {
       // 是不是正在播放的
       if (AVPlayer.url === song.url) {
@@ -209,32 +215,29 @@ export class AVPlayerClass {
   }
 
   // 跳转进度
-  async jumpPlay(val:number){
-
-    const AVPlayer = await this.init()
+  async jumpPlay(val: number) {
 
     if (this.isPlay) {
-      AVPlayer.seek(val)
-    }else {
+      this.player!.seek(val)
+    } else {
       this.time = val
     }
-
   }
+
   // 切换歌曲
   async changePlay() {
-    const AVPlayer = await this.init()
+    // const AVPlayer = await this.init()
     // 重置播放器状态至初始化,异步方法
-    await AVPlayer.reset()
+    await this.player!.reset()
     // 重置播放状态
     this.duration = 0
     this.time = 0
-    AVPlayer.url = this.playList[this.playIndex].url
+    this.player!.url = this.playList[this.playIndex].url
   }
 
   // 暂停歌曲
   async pausePlay() {
-    const AVPlayer = await this.init()
-    await AVPlayer.pause()
+    await this.player!.pause()
   }
 
   // 切换播放模式
@@ -296,34 +299,35 @@ export class AVPlayerClass {
   }
 
   // 删除播放列表的歌曲
-  async remove(index: number) {
+  async remove(item: songItemType) {
     // 移除正在播放的
-    if (this.playIndex === index) {
+    if (this.player?.url === item.url) {
       // 还有其他的歌
       if (this.playList.length > 1) {
         // 播下一首(播放会自动发布状态)
-        this.playList.splice(index, 1)
+        const songIndex = this.playList.findIndex(v => v.id === item.id)
+        this.playList.splice(songIndex, 1)
         // 有可能删除列表的最后一首
         this.playIndex = (this.playIndex + this.playList.length) % this.playList.length
         this.singlePlay(this.playList[this.playIndex])
       } else {
         // 就这一首
         // 重置播放器,删除数据，重置记录的状态，发布状态，返回首页
-        const AVPlayer = await this.init()
-        AVPlayer.reset()
-        this.playList.splice(index, 1)
+        this.player!.reset()
+        this.playList = []
         this.isPlay = false
         this.duration = 0
         this.time = 0
-        this.updateState({} as PlayStateType)
+        this.updateState(new PlayStateTypeModel())
         router.back()
       }
     } else {
+      const songIndex = this.playList.findIndex(v => v.id === item.id)
       // 删除前面的
-      if (this.playIndex > index) {
+      if (this.playIndex > songIndex) {
         this.playIndex--
       }
-      this.playList.splice(index, 1)
+      this.playList.splice(songIndex, 1)
       // 发布状态（可能是暂停删除的）
       this.updateState({
         img: this.playList[this.playIndex].img,

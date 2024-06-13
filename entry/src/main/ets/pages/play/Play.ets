@@ -2,9 +2,6 @@ import { songs } from '../../common/constants/MusicConstants'
 import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
 import { songItemType } from '../../models/music'
 import { PlayStateType, PlayStateTypeModel } from '../../models/playState'
-import { emitter } from '@kit.BasicServicesKit'
-import { EmitEventType } from '../../common/constants/EventConstants'
-import { MyPreferences } from '../../common/utils/Preference'
 import { PLAYSTATE } from '../../common/constants/Persistence'
 
 @Entry
@@ -19,8 +16,6 @@ struct Play {
   @State randomShakenX: number = 0
   @State randomShakenY: number = 0
   @State randomColor: string = 'rgb(0,0,0)'
-  @State progressBarState: boolean = false
-  @State playlist: songItemType[] = []
   // 进度条转跳转防抖
   jumpTimer: number = -1
   // 订阅事件
@@ -131,12 +126,13 @@ struct Play {
       .height('100%')
       .type(ButtonType.Normal)
       .onClick(async () => {
-        const AVPlayer = await HMAVPlayer.init()
         // 先更新UI,再去操作数据
         animateTo({ duration: 1000 }, () => {
-          this.playlist.splice(index, 1)
+          this.playState.playList.splice(this.playState.playList.findIndex(v => v.id === item.id), 1)
+          // 强制更新ui,深层次修改无法触发动画效果
+          this.playState.playList = JSON.parse(JSON.stringify(this.playState.playList))
         })
-        HMAVPlayer.remove(index)
+        HMAVPlayer.remove(item)
 
         // if (AVPlayer.url === item.url) {
         //   if (this.playState.playMode === 'random' && this.playState.playList.length > 1) {
@@ -423,7 +419,7 @@ struct Play {
           .justifyContent(FlexAlign.Center)
 
           Row({ space: 8 }) {
-            Text(`播放列表 (${this.playlist.length})`)
+            Text(`播放列表 (${this.playState.playList.length})`)
               .fontColor(Color.White)
               .fontSize(14)
           }
@@ -451,7 +447,7 @@ struct Play {
         })
 
         List() {
-          ForEach(songs, (item: songItemType, index: number) => {
+          ForEach(this.playState.playList, (item: songItemType, index: number) => {
             ListItem() {
               Row() {
                 Row() {

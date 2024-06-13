@@ -1,7 +1,8 @@
 import { songs } from '../../common/constants/MusicConstants'
+import { PLAYSTATE } from '../../common/constants/Persistence'
 import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
 import { songItemType, songItemTypeModel } from '../../models/music'
-import { PlayStateType } from '../../models/playState'
+import { PlayStateType, PlayStateTypeModel } from '../../models/playState'
 
 @Component
 struct Mine {
@@ -101,7 +102,7 @@ struct Mine {
 
 @Component
 struct SongCard {
-  @Consume playState: PlayStateType
+  @StorageProp(PLAYSTATE) playState: PlayStateType = new PlayStateTypeModel()
   columnIndex: number = 0
   @State
   showList: songItemType[] = []
