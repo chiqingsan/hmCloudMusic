@@ -1,14 +1,28 @@
 import { favoriteList } from '../../common/constants'
+import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
 import { songItemType } from '../../models/index'
+
 @Component
 struct SongList {
-  @StorageProp("topHeight") topHeight:number = 0
+  @StorageProp("topHeight") topHeight: number = 0
+
+  // 播放歌曲
+  playSong(item: songItemType) {
+    HMAVPlayer.singlePlay(item)
+  }
+
+  // 播放全部
+  playAll() {
+    HMAVPlayer.playList = favoriteList.songs
+    HMAVPlayer.singlePlay(HMAVPlayer.playList[0])
+  }
+
   build() {
     Column() {
       // 播放页
       Column() {
         // 歌单明细
-        Column({space:20}) {
+        Column({ space: 20 }) {
           // 简介
           Row({ space: 8 }) {
             Row() {
@@ -34,7 +48,8 @@ struct SongList {
             }
             .alignItems(HorizontalAlign.Start)
             .layoutWeight(1)
-          }.padding({top:this.topHeight})
+          }.padding({ top: this.topHeight })
+
           // 按钮
           Row() {
             Button() {
@@ -97,17 +112,21 @@ struct SongList {
           colors: [['#ff865d13', 0.0], [Color.Transparent, 1.0]]
         })
         .padding(16)
+
         // 播放列表
         Column() {
           Row({ space: 8 }) {
-           Row({space:8}){
-             Image($r("app.media.ic_play"))
-               .width(16)
-               .fillColor('#ff5186')
-             Text(`播放全部 (${favoriteList.songs.length})`)
-               .fontColor(Color.White)
-               .fontSize(14)
-           }
+            Row({ space: 8 }) {
+              Image($r("app.media.ic_play"))
+                .width(16)
+                .fillColor('#ff5186')
+              Text(`播放全部 (${favoriteList.songs.length})`)
+                .fontColor(Color.White)
+                .fontSize(14)
+            }
+            .onClick(() => {
+              this.playAll()
+            })
           }
           .width('100%')
           .padding(16)
@@ -143,6 +162,7 @@ struct SongList {
                     .width(50)
                     .aspectRatio(1)
                     .justifyContent(FlexAlign.Center)
+
                     // 列表
                     Row({ space: 10 }) {
                       if (index < 3) {
@@ -173,6 +193,9 @@ struct SongList {
                   }
                   .alignItems(VerticalAlign.Center)
                 }
+                .onClick(() => {
+                  this.playSong(item)
+                })
                 .border({
                   width: { bottom: 1 },
                   color: '#12ec5c87'
@@ -190,7 +213,7 @@ struct SongList {
               }
             }
             .layoutWeight(1)
-            .padding({bottom:15})
+            .padding({ bottom: 15 })
           }
           .layoutWeight(1)
         }
@@ -204,8 +227,10 @@ struct SongList {
     .width('100%')
     .height('100%')
     .backgroundColor('#121215')
+
     // .padding({top:this.topHeight})
   }
 }
+
 
 export default SongList

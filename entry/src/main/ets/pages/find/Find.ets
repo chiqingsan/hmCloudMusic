@@ -1,8 +1,16 @@
 import { songs } from '../../common/constants'
-import {songItemType} from '../../models/index'
+import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
+import { songItemType } from '../../models/index'
+
 @Component
 struct Find {
-  @StorageProp("topHeight") topHeight:number = 0
+  @StorageProp("topHeight") topHeight: number = 0
+
+  // 播放歌曲
+  playSong(item: songItemType) {
+    HMAVPlayer.singlePlay(item)
+  }
+
   build() {
     Column() {
       Row() {
@@ -10,28 +18,29 @@ struct Find {
       }
       .padding(24)
       .width('100%')
-      Row(){
-        List({space:12}) {
-          ForEach(songs,(item:songItemType,index:number)=>{
+
+      Row() {
+        List({ space: 12 }) {
+          ForEach(songs, (item: songItemType, index: number) => {
             ListItem() {
-              Row({space:12}) {
-                  Image(item.img)
-                    .borderRadius(8)
-                    .width(60)
-                Column({space:12}) {
+              Row({ space: 12 }) {
+                Image(item.img)
+                  .borderRadius(8)
+                  .width(60)
+                Column({ space: 12 }) {
                   Text(item.name).fontColor('#e9e9e7')
-                  Row({space:4}){
+                  Row({ space: 4 }) {
                     Text('VIP')
                       .fontSize(9)
                       .padding({
-                        left:6,
-                        right:6,
-                        top:1,
-                        bottom:1
+                        left: 6,
+                        right: 6,
+                        top: 1,
+                        bottom: 1
                       })
                       .border({
-                        width:1,
-                        color:'#c0a267'
+                        width: 1,
+                        color: '#c0a267'
                       })
                       .borderRadius(10)
                       .fontColor('#c0a267')
@@ -50,6 +59,9 @@ struct Find {
                 }
               }
             }
+            .onClick(() => {
+              this.playSong(item)
+            })
           })
           ListItem() {
             Row() {
@@ -64,16 +76,16 @@ struct Find {
         .width('100%')
         .height('100%')
         .padding({
-          left:24,
-          right:24,
-          bottom:10
+          left: 24,
+          right: 24,
+          bottom: 10
         })
       }
       .layoutWeight(1)
     }
     .width('100%')
     .height('100%')
-    .padding({top:this.topHeight})
+    .padding({ top: this.topHeight })
   }
 }
 

@@ -1,9 +1,15 @@
 import { momentList } from '../../common/constants'
-import { momentListType } from '../../models/index'
+import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
+import { momentListType, songItemType } from '../../models/index'
 
 @Component
 struct Moment {
   @StorageProp("topHeight") topHeight: number = 0
+
+  // 播放歌曲
+  playSong(item: songItemType) {
+    HMAVPlayer.singlePlay(item)
+  }
 
   build() {
     Column() {
@@ -61,6 +67,9 @@ struct Moment {
                   .width('100%')
                   .borderRadius(8)
                   .clip(true)
+                  .onClick(() => {
+                    this.playSong(item.song)
+                  })
 
                   Row({ space: 20 }) {
                     Row() {
