@@ -12,7 +12,7 @@ struct PlayerNav {
       if (this.playState?.isPlay) {
         await HMAVPlayer.pausePlay()
       } else {
-        await HMAVPlayer.singlePlay(songs[this.playState.playIndex])
+        await HMAVPlayer.singlePlay(this.playState.playList[this.playState.playIndex])
       }
     } catch (e) {
       console.log("playerNav_e:", JSON.stringify(e))

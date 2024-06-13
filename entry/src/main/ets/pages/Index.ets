@@ -111,8 +111,8 @@ struct HomeIndex {
                 url: 'pages/play/Play'
               })
             })
-          // .visibility(this.playState.playList?.length && this.currentName !== 'mine' ? Visibility.Visible :
-          // Visibility.Hidden)
+            .visibility(this.playState.playList.length && this.currentName !== 'mine' ? Visibility.Visible :
+            Visibility.Hidden)
 
         }
 

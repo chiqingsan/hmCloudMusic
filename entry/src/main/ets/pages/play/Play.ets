@@ -371,7 +371,8 @@ struct Play {
                 .bindSheet($$this.isShow,
                   this.aListOfSongs(), {
                     height: "50%",
-                    showClose: false
+                    showClose: false,
+                    backgroundColor: "#353333"
                   })
                 .onClick(() => {
                   this.isShow = true

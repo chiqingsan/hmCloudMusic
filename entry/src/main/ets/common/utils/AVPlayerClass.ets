@@ -29,12 +29,17 @@ export class AVPlayerClass {
   // 节流标识
   timer: number = -1
 
-  constructor() {
-    this.init()
-      .then((player) => {
-        this.player = player
-      })
-  }
+  // constructor() {
+  //   this.init().then(player => {
+  //     if (player) {
+  //       this.player = player;
+  //     } else {
+  //       throw new Error('播放器初始化失败');
+  //     }
+  //   }).catch((error: Error) => {
+  //     console.error('播放器初始化失败', error);
+  //   });
+  // }
 
   // 更新歌曲信息至页面
   updateState(playState: PlayStateType) {
@@ -57,7 +62,6 @@ export class AVPlayerClass {
     }
 
     const AVPlayer = await media.createAVPlayer()
-
     // 读取首选项的播放状态
     const playState = MyPreferences.getData(PLAYSTATE, new PlayStateTypeModel())
     // 加载播放器状态(6种)
@@ -70,7 +74,8 @@ export class AVPlayerClass {
     this.playMode = playState.playMode
     // todo 开发方便, 把已有的列表加进去
     // 把歌曲列表加进去
-    HMAVPlayer.playList = songs
+    // this.playList = songs
+    // playState.playList = songs
     // 更新播放状态
     this.updateState(playState)
 
@@ -175,28 +180,30 @@ export class AVPlayerClass {
 
   // 单首歌播放
   async singlePlay(song: songItemType) {
-    const AVPlayer = await this.init()
+    console.log(this.player?.state)
     // 每次调用播放的时候,如果播放器不处于暂停,都要重置掉之前的播放状态
-    // if (AVPlayer.state !== "paused") {
-    //   await AVPlayer.reset()
+    // if (this.player!.state !== "paused") {
+    //   await this.player!.reset()
     // }
     // 判断是不是列表中的歌曲
-    const isList = this.playList.some((item: songItemType) => item.id === song.id)
+    console.log("AVPlayerClass_this.playList:", JSON.stringify(this.playList))
+    const isList = this.playList.some(item => item.id === song.id)
     // 如果是歌曲列表中的歌曲
+    console.log("AVPlayerClass_isList:", JSON.stringify(isList))
     if (isList) {
       // 是不是正在播放的
-      if (AVPlayer.url === song.url) {
+      if (this.player!.url === song.url) {
         if (this.isPlay) {
           // 重新播放（切换当前播放索引的歌曲）
           this.changePlay()
         } else {
           // 恢复播放进度
-          AVPlayer.seek(this.time)
-          // AVPlayer.play()
+          this.player!.seek(this.time)
+          // this.player!.play()
         }
-      } else if (!AVPlayer.url && this.time !== 0) {
+      } else if (!this.player!.url && this.time !== 0) {
         // 如果url为空,则继续播放
-        AVPlayer.url = song.url
+        this.player!.url = song.url
       } else {
         // 切换歌曲(更新播放索引切换歌曲)
         this.playIndex = this.playList.findIndex((item: songItemType) => item.id === song.id)
@@ -208,10 +215,6 @@ export class AVPlayerClass {
       this.playIndex = 0
       this.changePlay()
     }
-    // 添加到播放列表中，再进行播放
-    // this.playList.unshift(song)
-    // this.playIndex = 0
-    // AVPlayer.url = song.url
   }
 
   // 跳转进度
