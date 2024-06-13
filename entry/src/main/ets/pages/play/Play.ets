@@ -20,7 +20,9 @@ struct Play {
   jumpTimer: number = -1
   // 订阅事件
   @StorageProp(PLAYSTATE) @Watch('changeAnimate') playState: PlayStateType = new PlayStateTypeModel()
-
+  // 控制播放暂停开关
+  @State btnEnable: boolean = this.playState.isPlay
+  
   aboutToAppear(): void {
     // this.playState = MyPreferences.getData(PLAYSTATE, new PlayStateTypeModel())
     // // AlertDialog.show({ message: JSON.stringify(this.playState, null, 2) })
@@ -72,6 +74,7 @@ struct Play {
   async playMusic() {
     // 同步播放状态
     if (this.playState.isPlay) {
+      this.btnEnable = false
       await HMAVPlayer.pausePlay()
     } else {
       // if (this.playState.time) {
@@ -80,7 +83,7 @@ struct Play {
       //   console.log("Play_AVPlayer:", JSON.stringify(AVPlayer.state))
       //   AVPlayer.url = this.playState.url
       // } else {
-
+      this.btnEnable = true
       await HMAVPlayer.singlePlay(this.playState.playList[this.playState.playIndex])
       // }
     }
@@ -354,6 +357,7 @@ struct Play {
               Image(this.playState.isPlay ? $r('app.media.ic_paused') : $r('app.media.ic_play'))
                 .fillColor(Color.White)
                 .width(50)
+                .enabled(this.playState.isPlay === this.btnEnable)
                 .onClick(() => {
                   this.playMusic()
                 })

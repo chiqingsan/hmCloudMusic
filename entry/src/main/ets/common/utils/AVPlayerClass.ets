@@ -4,6 +4,7 @@ import { PlayStateType, PlayStateTypeModel } from '../../models/playState'
 import { MyPreferences } from './Preference'
 import { PLAYSTATE } from '../constants/Persistence'
 import { router } from '@kit.ArkUI'
+import { backgroundRunningManager } from './BackgroundRunningManager'
 
 
 export class AVPlayerClass {
@@ -95,6 +96,8 @@ export class AVPlayerClass {
           break;
         case 'playing':
           this.isPlay = true
+        // 播放态的时候,申请后台任务
+          backgroundRunningManager.startBackgroundRunning()
         // play成功调用后触发该状态机上报
           break;
         case 'paused':
@@ -140,7 +143,7 @@ export class AVPlayerClass {
     //  监听播放时长
     AVPlayer.on('timeUpdate', (time) => {
       // 大坑,seek完了仍然会先走update为0，要恢复进度，防止将0的进度写入首选项进行播放
-      if ((time !== 0 && time - this.time > 1000) || AVPlayer.state === "paused") {
+      if ((time !== 0 && time - this.time > 800) || AVPlayer.state === "paused") {
         this.time = time
         // 收集要通知的信息
         const playState: PlayStateType = {
@@ -183,6 +186,7 @@ export class AVPlayerClass {
     //   await this.player!.reset()
     // }
     // 判断是不是列表中的歌曲
+
     const isList = this.playList.some(item => item.id === song.id)
     // 如果是歌曲列表中的歌曲
     if (isList) {
@@ -347,6 +351,8 @@ export class AVPlayerClass {
   release() {
     this.player?.reset()
     this.player?.release()
+    // 释放实例的时候,停止后台任务申请
+    backgroundRunningManager.stopBackgroundRunning()
   }
 }
 

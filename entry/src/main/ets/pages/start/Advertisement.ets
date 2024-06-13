@@ -44,7 +44,7 @@ struct Advertisement {
       })
 
       Button(`${this.time}秒后跳过`)
-        .padding({ left: 10, right: 10 })
+        .padding({ left: 15, right: 15 })
         .margin({ right: 20, top: 20 })
         .height(30)
         .fontSize(14)
