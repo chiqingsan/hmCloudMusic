@@ -1,16 +1,27 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
-import { AbilityConstant, Want } from '@kit.AbilityKit';
+import { AbilityConstant, errorManager, Want } from '@kit.AbilityKit';
 import { HMAVPlayer } from "../common/utils/AVPlayerClass"
-import { songs } from '../common/constants/MusicConstants';
-import { MyPreferences } from '../common/utils/Preference';
-import { PLAYSTATE } from '../common/constants/Persistence';
-import { PlayStateType } from '../models/playState';
+import { FaultLogger } from '@kit.PerformanceAnalysisKit';
+
+let errorManagerId: number
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
+
+    //注册错误观察器,来捕获未知的错误
+    errorManagerId = errorManager.on("error", {
+      async onUnhandledException() {
+        const errorInfoList = await FaultLogger.query(FaultLogger.FaultType.JS_CRASH)
+        const errorInfo = errorInfoList[0]
+        // AlertDialog.show({
+        //   message: JSON.stringify(errorInfo, null, 2)
+        // })
+        console.log("EntryAbility_errorInfo:", JSON.stringify(errorInfo))
+      }
+    })
   }
 
   onDestroy() {
@@ -18,7 +29,7 @@ export default class EntryAbility extends UIAbility {
 
   }
 
-  async onWindowStageCreate(windowStage: window.WindowStage) {
+  onWindowStageCreate(windowStage: window.WindowStage) {
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
@@ -28,16 +39,16 @@ export default class EntryAbility extends UIAbility {
     // await win.showWindow()
     // win.setUIContent("pages/start/Advertisement")
 
-    // 初始化AVPlayer播放器
-    HMAVPlayer.init()
-    // 把歌曲列表加进去
-    HMAVPlayer.playList = songs
+
     windowStage.loadContent('pages/Index', (err, data) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
         return;
       }
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content. Data: %{public}s', JSON.stringify(data) ?? '');
+
+      // 初始化AVPlayer播放器
+      HMAVPlayer.init()
     });
   }
 

@@ -1,17 +1,21 @@
-import { PlayStateType } from '../../models/playState'
+import { PlayStateType, PlayStateTypeModel } from '../../models/playState'
 import { songs } from '../constants/MusicConstants'
+import { PLAYSTATE } from '../constants/Persistence'
 import { HMAVPlayer } from '../utils/AVPlayerClass'
 
 @Component
 struct PlayerNav {
-  @Consume playState: PlayStateType
+  @StorageProp(PLAYSTATE) playState: PlayStateType = new PlayStateTypeModel()
 
   async playMusic() {
-    // 同步播放状态
-    if (this.playState?.isPlay) {
-      await HMAVPlayer.pausePlay()
-    } else {
-      await HMAVPlayer.singlePlay(songs[this.playState.playIndex])
+    try { // 同步播放状态
+      if (this.playState?.isPlay) {
+        await HMAVPlayer.pausePlay()
+      } else {
+        await HMAVPlayer.singlePlay(songs[this.playState.playIndex])
+      }
+    } catch (e) {
+      console.log("playerNav_e:", JSON.stringify(e))
     }
   }
 

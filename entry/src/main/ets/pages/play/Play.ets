@@ -1,7 +1,7 @@
 import { songs } from '../../common/constants/MusicConstants'
 import { HMAVPlayer } from '../../common/utils/AVPlayerClass'
 import { songItemType } from '../../models/music'
-import { PlayStateType } from '../../models/playState'
+import { PlayStateType, PlayStateTypeModel } from '../../models/playState'
 import { emitter } from '@kit.BasicServicesKit'
 import { EmitEventType } from '../../common/constants/EventConstants'
 import { MyPreferences } from '../../common/utils/Preference'
@@ -24,21 +24,21 @@ struct Play {
   // 进度条转跳转防抖
   jumpTimer: number = -1
   // 订阅事件
-  @State @Watch('changeAnimate') playState: PlayStateType = {} as PlayStateType
+  @StorageProp(PLAYSTATE) @Watch('changeAnimate') playState: PlayStateType = new PlayStateTypeModel()
 
   aboutToAppear(): void {
-    this.playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
-    // AlertDialog.show({ message: JSON.stringify(this.playState, null, 2) })
-    // 只能手动指定为false
-    this.playState.isPlay = false
-    this.playlist = this.playState.playList
-    emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
-      if (data.data) {
-        // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
-        this.playState = data.data?.playStateStr || {} as PlayStateType
-        // this.progressBarNum = this.playState.time
-      }
-    })
+    // this.playState = MyPreferences.getData(PLAYSTATE, new PlayStateTypeModel())
+    // // AlertDialog.show({ message: JSON.stringify(this.playState, null, 2) })
+    // // 只能手动指定为false
+    // this.playState.isPlay = false
+    // // this.playlist = this.playState.playList
+    // emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
+    //   if (data.data) {
+    //     // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
+    //     this.playState = data.data?.playStateStr || {} as PlayStateType
+    //     // this.progressBarNum = this.playState.time
+    //   }
+    // })
   }
 
   // 时长数字(ms)转字符串
@@ -97,9 +97,10 @@ struct Play {
     if (mode === SliderChangeMode.End || mode === SliderChangeMode.Click) {
       // console.log("val:", val)
       this.playState.time = val
-      const AVPlayer = await HMAVPlayer.init()
-      // await AVPlayer.pause()
-      AVPlayer.seek(val)
+      HMAVPlayer.jumpPlay(val)
+      // const AVPlayer = await HMAVPlayer.init()
+      // // await AVPlayer.pause()
+      // AVPlayer.seek(val)
     }
   }
 
@@ -450,7 +451,7 @@ struct Play {
         })
 
         List() {
-          ForEach(this.playlist, (item: songItemType, index: number) => {
+          ForEach(songs, (item: songItemType, index: number) => {
             ListItem() {
               Row() {
                 Row() {

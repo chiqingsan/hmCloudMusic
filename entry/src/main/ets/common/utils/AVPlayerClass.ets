@@ -2,10 +2,12 @@ import { media } from '@kit.MediaKit'
 import { songItemType } from '../../models'
 import { emitter } from '@kit.BasicServicesKit'
 import { EmitEventType } from '../constants/EventConstants'
-import { PlayStateType } from '../../models/playState'
+import { PlayStateType, PlayStateTypeModel } from '../../models/playState'
 import { MyPreferences } from './Preference'
 import { PLAYSTATE } from '../constants/Persistence'
 import { router } from '@kit.ArkUI'
+import { songs } from '../../common/constants/MusicConstants';
+
 
 export class AVPlayerClass {
   // 当前是否播放
@@ -27,47 +29,41 @@ export class AVPlayerClass {
   // 节流标识
   timer: number = -1
 
-  constructor() {
-    this.init()
-      .then((results) => {
-        this.player = results
-      })
-  }
-
   // 更新歌曲信息至页面
   updateState(playState: PlayStateType) {
     // 频繁发送通知和IO读写,可能会造成设备的耗电发热
-    emitter.emit({ eventId: EmitEventType.UPDATE_STATE }, {
-      data: {
-        playStateStr: playState
-      }
-    })
+    // emitter.emit({ eventId: EmitEventType.UPDATE_STATE }, {
+    //   data: {
+    //     playStateStr: playState
+    //   }
+    // })
     // 持久化当前播放的数据
+    AppStorage.setOrCreate(PLAYSTATE, playState)
     MyPreferences.saveData(PLAYSTATE, playState)
-    this.timer = setTimeout(() => {
-      this.timer = -1
-    }, 1500)
 
   }
 
   // 创建播放器的方法
-  async init(): Promise<media.AVPlayer> {
-    if (this.player) {
+  async init() {
+    if (this.player !== null) {
       return this.player
     }
 
     const AVPlayer = await media.createAVPlayer()
 
     // 读取首选项的播放状态
-    const playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
+    const playState = MyPreferences.getData(PLAYSTATE, new PlayStateTypeModel())
     // 加载播放器状态(6种)
     // 有可能播放过强制退出,手动重置为未播放
     playState.isPlay = false
-    this.time = playState.time ?? 0
-    this.duration = playState.duration ?? 0
-    this.playIndex = playState.playIndex ?? -1
-    this.playList = playState.playList ?? []
-    this.playMode = playState.playMode ?? "auto"
+    this.time = playState.time
+    this.duration = playState.duration
+    this.playIndex = playState.playIndex
+    this.playList = playState.playList
+    this.playMode = playState.playMode
+    // todo 开发方便, 把已有的列表加进去
+    // 把歌曲列表加进去
+    HMAVPlayer.playList = songs
     // 更新播放状态
     this.updateState(playState)
 
@@ -180,6 +176,7 @@ export class AVPlayerClass {
     // 判断是不是列表中的歌曲
     const isList = this.playList.some((item: songItemType) => item.id === song.id)
     // 如果是歌曲列表中的歌曲
+    console.log("AVPlayerClass_isList:", JSON.stringify(isList))
     if (isList) {
       // 是不是正在播放的
       if (AVPlayer.url === song.url) {
@@ -188,11 +185,10 @@ export class AVPlayerClass {
           this.changePlay()
         } else {
           // 恢复播放进度
-          console.log("走到这里了吗", this.time)
           AVPlayer.seek(this.time)
           // AVPlayer.play()
         }
-      } else if (!AVPlayer.url) {
+      } else if (!AVPlayer.url && this.time !== 0) {
         // 如果url为空,则继续播放
         AVPlayer.url = song.url
       } else {
@@ -212,6 +208,18 @@ export class AVPlayerClass {
     // AVPlayer.url = song.url
   }
 
+  // 跳转进度
+  async jumpPlay(val:number){
+
+    const AVPlayer = await this.init()
+
+    if (this.isPlay) {
+      AVPlayer.seek(val)
+    }else {
+      this.time = val
+    }
+
+  }
   // 切换歌曲
   async changePlay() {
     const AVPlayer = await this.init()

@@ -10,7 +10,7 @@ import { tabsData } from '../common/constants'
 import { windowManager } from '../common/utils/windowManager'
 import { emitter } from '@kit.BasicServicesKit'
 import { EmitEventType } from '../common/constants/EventConstants'
-import { PlayStateType } from '../models/playState'
+import { PlayStateType, PlayStateTypeModel } from '../models/playState'
 import { JSON } from '@kit.ArkTS'
 import { MyPreferences } from '../common/utils/Preference'
 import { PLAYSTATE } from '../common/constants/Persistence'
@@ -23,23 +23,23 @@ struct HomeIndex {
   currentName: string = 'recommend'
   @State
   opacityNum: number = 1
-  @Provide playState: PlayStateType = {} as PlayStateType
+  @StorageProp(PLAYSTATE) playState: PlayStateType = new PlayStateTypeModel()
 
   aboutToAppear(): void {
     // 开始沉浸式状态栏
     windowManager.enableFullScreen(true)
     windowManager.settingStatusBar(true)
-    // 获取持久化信息
-    this.playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
-    // 只能手动指定为false
-    this.playState.isPlay = false
-    emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
-      if (data.data) {
-        // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
-        this.playState = data.data?.playStateStr || {} as PlayStateType
-        // console.log(JSON.stringify(data.data));
-      }
-    })
+    // // 获取持久化信息
+    // this.playState = MyPreferences.getData(PLAYSTATE, {} as PlayStateType)
+    // // 只能手动指定为false
+    // this.playState.isPlay = false
+    // emitter.on({ eventId: EmitEventType.UPDATE_STATE }, (data) => {
+    //   if (data.data) {
+    //     // this.playState = JSON.parse(data.data["PlayStateType"]) as PlayStateType
+    //     this.playState = data.data?.playStateStr || {} as PlayStateType
+    //     // console.log(JSON.stringify(data.data));
+    //   }
+    // })
   }
 
   onPageShow(): void {
