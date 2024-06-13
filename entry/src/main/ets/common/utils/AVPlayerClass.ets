@@ -69,7 +69,6 @@ export class AVPlayerClass {
     this.playIndex = playState.playIndex
     this.playList = playState.playList
     this.playMode = playState.playMode
-    // todo 开发方便, 把已有的列表加进去
     // 把歌曲列表加进去
     // this.playList = songs
     // playState.playList = songs
@@ -141,7 +140,7 @@ export class AVPlayerClass {
     //  监听播放时长
     AVPlayer.on('timeUpdate', (time) => {
       // 大坑,seek完了仍然会先走update为0，要恢复进度，防止将0的进度写入首选项进行播放
-      if ((time !== 0 && this.time !== time) || AVPlayer.state === "paused") {
+      if ((time !== 0 && time - this.time > 1000) || AVPlayer.state === "paused") {
         this.time = time
         // 收集要通知的信息
         const playState: PlayStateType = {
@@ -158,6 +157,7 @@ export class AVPlayerClass {
         }
         // 通知页面和首选项
         this.updateState(playState)
+        console.log(Date.now().toString())
       }
     })
 

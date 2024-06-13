@@ -25,26 +25,23 @@ struct Advertisement {
   }
 
   aboutToDisappear(): void {
-    // 开始沉浸式状态栏
+    // // 开始沉浸式状态栏
     windowManager.enableFullScreen(true)
     windowManager.settingStatusBar(true)
     clearInterval(this.timer)
   }
 
-
-
-
   build() {
     Stack({ alignContent: Alignment.TopEnd }) {
-        Row() {
-        }
-        .width('100%')
-        .height('100%')
-        .backgroundImage($r('app.media.ad'))
-        .backgroundImageSize({
-          width: '100%',
-          height: '100%'
-        })
+      Row() {
+      }
+      .width('100%')
+      .height('100%')
+      .backgroundImage($r('app.media.ad'))
+      .backgroundImageSize({
+        width: '100%',
+        height: '100%'
+      })
 
       Button(`${this.time}秒后跳过`)
         .padding({ left: 10, right: 10 })
@@ -53,9 +50,9 @@ struct Advertisement {
         .fontSize(14)
         .backgroundColor($r("app.color.background_page"))
         .border({
-          width:1,
-          color:"#444444",
-          radius:15
+          width: 1,
+          color: "#444444",
+          radius: 15
         })
         .fontColor("#1c1c1c")
         .onClick(() => {
