@@ -128,6 +128,7 @@ struct SongCard {
           Stack() {
             Image(item.img)
               .width('100%')
+              .alt($r("app.media.logo"))
             // 播放中动图
             Row() {
               Image($r('app.media.ic_playing'))

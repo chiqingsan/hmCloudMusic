@@ -186,10 +186,8 @@ export class AVPlayerClass {
     //   await this.player!.reset()
     // }
     // 判断是不是列表中的歌曲
-    console.log("AVPlayerClass_this.playList:", JSON.stringify(this.playList))
     const isList = this.playList.some(item => item.id === song.id)
     // 如果是歌曲列表中的歌曲
-    console.log("AVPlayerClass_isList:", JSON.stringify(isList))
     if (isList) {
       // 是不是正在播放的
       if (this.player!.url === song.url) {
