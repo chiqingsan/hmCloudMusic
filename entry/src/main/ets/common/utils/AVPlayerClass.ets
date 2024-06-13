@@ -5,6 +5,7 @@ import { EmitEventType } from '../constants/EventConstants'
 import { PlayStateType } from '../../models/playState'
 import { MyPreferences } from './Preference'
 import { PLAYSTATE } from '../constants/Persistence'
+import { router } from '@kit.ArkUI'
 
 export class AVPlayerClass {
   // 当前是否播放
@@ -23,6 +24,8 @@ export class AVPlayerClass {
   playList: songItemType[] = []
   // 当前的播放序号
   playIndex: number = -1
+  // 节流标识
+  timer: number = -1
 
   constructor() {
     this.init()
@@ -33,6 +36,7 @@ export class AVPlayerClass {
 
   // 更新歌曲信息至页面
   updateState(playState: PlayStateType) {
+    // 频繁发送通知和IO读写,可能会造成设备的耗电发热
     emitter.emit({ eventId: EmitEventType.UPDATE_STATE }, {
       data: {
         playStateStr: playState
@@ -40,6 +44,10 @@ export class AVPlayerClass {
     })
     // 持久化当前播放的数据
     MyPreferences.saveData(PLAYSTATE, playState)
+    this.timer = setTimeout(() => {
+      this.timer = -1
+    }, 1500)
+
   }
 
   // 创建播放器的方法
@@ -277,6 +285,51 @@ export class AVPlayerClass {
       this.playIndex = (this.playIndex + this.playList.length) % this.playList.length
     }
     this.singlePlay(this.playList[this.playIndex])
+  }
+
+  // 删除播放列表的歌曲
+  async remove(index: number) {
+    // 移除正在播放的
+    if (this.playIndex === index) {
+      // 还有其他的歌
+      if (this.playList.length > 1) {
+        // 播下一首(播放会自动发布状态)
+        this.playList.splice(index, 1)
+        // 有可能删除列表的最后一首
+        this.playIndex = (this.playIndex + this.playList.length) % this.playList.length
+        this.singlePlay(this.playList[this.playIndex])
+      } else {
+        // 就这一首
+        // 重置播放器,删除数据，重置记录的状态，发布状态，返回首页
+        const AVPlayer = await this.init()
+        AVPlayer.reset()
+        this.playList.splice(index, 1)
+        this.isPlay = false
+        this.duration = 0
+        this.time = 0
+        this.updateState({} as PlayStateType)
+        router.back()
+      }
+    } else {
+      // 删除前面的
+      if (this.playIndex > index) {
+        this.playIndex--
+      }
+      this.playList.splice(index, 1)
+      // 发布状态（可能是暂停删除的）
+      this.updateState({
+        img: this.playList[this.playIndex].img,
+        name: this.playList[this.playIndex].name,
+        author: this.playList[this.playIndex].author,
+        url: this.playList[this.playIndex].url,
+        playIndex: this.playIndex,
+        time: this.time,
+        duration: this.duration,
+        isPlay: this.isPlay,
+        playMode: this.playMode,
+        playList: this.playList
+      })
+    }
   }
 }
 

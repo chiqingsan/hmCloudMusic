@@ -135,15 +135,7 @@ struct Play {
         animateTo({ duration: 1000 }, () => {
           this.playlist.splice(index, 1)
         })
-        HMAVPlayer.playList.splice(index, 1)
-        if (AVPlayer.state === "playing" && AVPlayer.url === item.url) {
-          // await AVPlayer.pause()
-          // 直接重置播放的状态
-          await AVPlayer.reset()
-          // 调用下一首继续播放
-          HMAVPlayer.next()
-          return
-        }
+        HMAVPlayer.remove(index)
 
         // if (AVPlayer.url === item.url) {
         //   if (this.playState.playMode === 'random' && this.playState.playList.length > 1) {
@@ -430,7 +422,7 @@ struct Play {
           .justifyContent(FlexAlign.Center)
 
           Row({ space: 8 }) {
-            Text(`播放列表 (${songs.length})`)
+            Text(`播放列表 (${this.playlist.length})`)
               .fontColor(Color.White)
               .fontSize(14)
           }
@@ -474,10 +466,10 @@ struct Play {
                   Column() {
                     Text(item.name)
                       .fontSize(14)
-                      .fontColor(index === this.playState.playIndex ? $r('app.color.primary_light') : '#ffa49a9a')
+                      .fontColor(item.url === this.playState.url ? $r('app.color.primary_light') : '#ffa49a9a')
                     Text(item.author)
                       .fontSize(12)
-                      .fontColor(index === this.playState.playIndex ? $r('app.color.primary_light') : Color.Gray)
+                      .fontColor(item.url === this.playState.url ? $r('app.color.primary_light') : Color.Gray)
                   }
                   .layoutWeight(1)
                   .alignItems(HorizontalAlign.Start)
